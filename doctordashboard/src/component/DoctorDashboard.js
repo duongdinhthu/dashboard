@@ -196,13 +196,25 @@ const DoctorDashboard = () => {
     const handleAddNewRecord = () => {
         axios.post(`http://localhost:8080/api/v1/medicalrecords/insert`, newRecord)
             .then(response => {
-                window.location.reload();
+                // Thay vì reload lại trang, chỉ cần cập nhật state
+                setAppointments([...appointments, response.data]);
+                setIsAddModalOpen(false); // Đóng modal
+                setNewRecord({
+                    patient_id: '',
+                    doctor_id: doctor.doctor_id,
+                    symptoms: '',
+                    diagnosis: '',
+                    treatment: '',
+                    prescription: '',
+                    follow_up_date: ''
+                });
             })
             .catch(error => {
                 console.error('Error adding new medical record', error);
                 setError('Error adding new medical record');
             });
     };
+
 
     const getTimeFromSlot = (slot) => {
         const slotToTime = {
