@@ -10,11 +10,10 @@ import { IconButton, TextField, MenuItem, Button, List, ListItem, ListItemText, 
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
-import Login from './Login';
 import SearchFields from "./SearchFields";
 import MedicalrecordList from "./MedicalrecordList";
 import EditMedicalrecordModal from './EditMedicalrecordModal';
-
+import LoginDoctor from "./LoginDoctor";
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
@@ -30,8 +29,7 @@ const DoctorDashboard = () => {
     const [selectedCategory, setSelectedCategory] = useState('Medicalrecords');
     const [error, setError] = useState('');
     const [editItem, setEditItem] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [doctor, setDoctor] = useState(null);
+    const [doctor, setDoctor] = useState(null); // Đảm bảo doctor có giá trị ban đầu null
     const [appointments, setAppointments] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchDate, setSearchDate] = useState('');
@@ -65,10 +63,10 @@ const DoctorDashboard = () => {
     }, [selectedCategory]);
 
     useEffect(() => {
-        if (isLoggedIn && doctor) {
+        if (doctor) { // Chỉ fetchAppointments nếu doctor không phải null
             fetchAppointments(doctor.doctor_id);
         }
-    }, [isLoggedIn, doctor]);
+    }, [doctor]);
 
     const fetchAppointments = (doctorId) => {
         axios.get(`http://localhost:8080/api/v1/doctors/${doctorId}/appointments`)
@@ -161,8 +159,7 @@ const DoctorDashboard = () => {
     };
 
     const handleLogin = (doctor) => {
-        setIsLoggedIn(true);
-        setDoctor(doctor);
+        setDoctor(doctor); // Lưu thông tin bác sĩ
     };
 
     const handleModalClose = () => {
@@ -196,9 +193,8 @@ const DoctorDashboard = () => {
     const handleAddNewRecord = () => {
         axios.post(`http://localhost:8080/api/v1/medicalrecords/insert`, newRecord)
             .then(response => {
-                // Thay vì reload lại trang, chỉ cần cập nhật state
                 setAppointments([...appointments, response.data]);
-                setIsAddModalOpen(false); // Đóng modal
+                setIsAddModalOpen(false);
                 setNewRecord({
                     patient_id: '',
                     doctor_id: doctor.doctor_id,
@@ -215,7 +211,6 @@ const DoctorDashboard = () => {
             });
     };
 
-
     const getTimeFromSlot = (slot) => {
         const slotToTime = {
             1: "08:00 - 09:00",
@@ -230,8 +225,8 @@ const DoctorDashboard = () => {
         return slotToTime[slot] || "Unknown Time";
     };
 
-    if (!isLoggedIn) {
-        return <Login onLogin={handleLogin} />;
+    if (!doctor) {
+        return <LoginDoctor onLogin={handleLogin} />;
     }
 
     return (

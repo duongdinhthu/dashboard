@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import AdminDashboard from './AdminDashboard';
+import DoctorDashboard from './DoctorDashboard';
 
-const Login = () => {
+const LoginDoctor = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,11 +13,13 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/staffs/login', { username, password });
-            if (response.status === 200) {
+            const response = await axios.post('http://localhost:8080/api/v1/doctors/login', { username, password });
+            if (response.status === 200 && response.data.doctor_type === 'doctor') {
                 setIsAuthenticated(true);
-                // Lưu thông tin người dùng hoặc token nếu cần
-                navigate('/admindashboard'); // Chuyển hướng đến dashboard sau khi đăng nhập thành công
+                localStorage.setItem('doctor_id', response.data.doctor_id); // Lưu doctor_id vào localStorage
+                navigate('/doctordashboard'); // Chuyển hướng đến doctor dashboard sau khi đăng nhập thành công
+            } else {
+                setError('Bạn không có quyền truy cập.');
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -31,12 +33,12 @@ const Login = () => {
     };
 
     if (isAuthenticated) {
-        return <AdminDashboard />;
+        return <DoctorDashboard />;
     }
 
     return (
         <div>
-            <h2>Đăng nhập</h2>
+            <h2>Đăng nhập Bác sĩ</h2>
             <form onSubmit={handleLogin}>
                 <div>
                     <label>Tên đăng nhập:</label>
@@ -63,4 +65,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginDoctor;
