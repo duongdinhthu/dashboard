@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Paper
+} from '@mui/material';
+import AppointmentsChart from "./AppointmentsChart";
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -62,17 +72,27 @@ const AdminDashboard = () => {
     const [editItem, setEditItem] = useState(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newData, setNewData] = useState({});
-    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false); // state cho modal feedback
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [todayAppointments, setTodayAppointments] = useState([]);
+    const [showTodayAppointments, setShowTodayAppointments] = useState(false);
 
     useEffect(() => {
+        fetchTodayAppointments();
         fetchAllFields(setFields, setError);
     }, []);
 
-    useEffect(() => {
-        if (selectedCategory && fields[selectedCategory]) {
-            setSearchFields([{ field: fields[selectedCategory][0]?.field || '', value: '' }]);
+    const fetchTodayAppointments = async () => {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const params = { appointment_date: today };
+            const response = await axios.get('http://localhost:8080/api/v1/appointments/search', { params });
+            console.log('Data received from backend:', response.data);
+            setTodayAppointments(response.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy cuộc hẹn hôm nay', error);
+            setError('Lỗi khi lấy cuộc hẹn hôm nay');
         }
-    }, [selectedCategory, fields]);
+    };
 
     const handleSearch = () => {
         const params = searchFields.reduce((acc, searchField) => {
@@ -264,6 +284,9 @@ const AdminDashboard = () => {
         setIsFeedbackModalOpen(true);
     };
 
+    const handleShowTodayAppointments = () => {
+        setShowTodayAppointments(!showTodayAppointments);
+    };
 
     return (
         <ThemeProvider theme={lightTheme}>
@@ -281,94 +304,154 @@ const AdminDashboard = () => {
                     <Toolbar />
                     <Container>
                         {error && <Typography color="error">{error}</Typography>}
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <TextField
-                                select
-                                label="Category"
-                                value={selectedCategory}
-                                onChange={(e) => {
-                                    setSelectedCategory(e.target.value);
-                                    setSearchFields([{ field: '', value: '' }]);
-                                    setSearchResults([]);
-                                    setError('');
-                                }}
-                                sx={{ mr: 2 }}
-                            >
-                                {categories.map((category) => (
-                                    <MenuItem key={category} value={category}>
-                                        {category}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <IconButton onClick={handleAddModalOpen} color="primary" sx={{ ml: 2 }}>
-                                <AddIcon />
-                            </IconButton>
-                        </Box>
-                        <SearchFields
-                            searchFields={searchFields}
-                            fields={fields}
-                            selectedCategory={selectedCategory}
-                            onFieldChange={handleSearchFieldChange}
-                            onAddField={handleAddSearchField}
-                            onRemoveField={handleRemoveSearchField}
-                        />
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <IconButton onClick={handleSearch} color="primary" disabled={searchFields.some(field => !field.field || !field.value)}>
-                                <SearchIcon />
-                            </IconButton>
-                        </Box>
-                        <Typography variant="h6" gutterBottom>
-                            {selectedCategory} Data
-                        </Typography>
-                        {selectedCategory === 'Patients' && (
-                            <PatientList
-                                searchResults={searchResults}
-                                handleButtonClick={handleButtonClick}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Staffs' && (
-                            <StaffList
-                                searchResults={searchResults}
-                                handleButtonClick={handleButtonClick}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Doctors' && (
-                            <DoctorList
-                                searchResults={searchResults}
-                                handleButtonClick={handleButtonClick}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Appointments' && (
-                            <AppointmentList
-                                searchResults={searchResults}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Medicalrecords' && (
-                            <MedicalrecordList
-                                searchResults={searchResults}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Departments' && (
-                            <DepartmentList
-                                searchResults={searchResults}
-                                handleEditClick={handleEditClick}
-                                handleDeleteClick={handleDeleteClick}
-                            />
-                        )}
-                        {selectedCategory === 'Feedbacks' && isFeedbackModalOpen && (
-                            <FeedbackListWithReply onClose={() => setIsFeedbackModalOpen(false)} />
-                        )}
 
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box sx={{ width: '50%' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Biểu đồ thống kê cuộc hẹn
+                                </Typography>
+                                <AppointmentsChart appointments={todayAppointments} />
+                            </Box>
+
+                            <Box sx={{ width: '45%' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Thống kê theo nút
+                                </Typography>
+                                <Button variant="contained" color="primary" onClick={handleShowTodayAppointments}>
+                                    {showTodayAppointments ? "Ẩn cuộc hẹn hôm nay" : "Hiển thị cuộc hẹn hôm nay"}
+                                </Button>
+                                {showTodayAppointments && (
+                                    <TableContainer component={Paper} sx={{ mt: 2 }}>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Thời gian</TableCell>
+                                                    <TableCell>Bệnh nhân</TableCell>
+                                                    <TableCell>Bác sĩ</TableCell>
+                                                    <TableCell>Trạng thái</TableCell>
+                                                    <TableCell>Giá</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {todayAppointments.length > 0 ? (
+                                                    todayAppointments.map((appointment, index) => (
+                                                        <TableRow key={index}>
+                                                            <TableCell>{new Date(appointment.appointment_date).toLocaleString()}</TableCell>
+                                                            <TableCell>{appointment.patient[0]?.patient_name}</TableCell>
+                                                            <TableCell>{appointment.doctor[0]?.doctor_name}</TableCell>
+                                                            <TableCell>{appointment.status}</TableCell>
+                                                            <TableCell>{appointment.price}</TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell colSpan={5} align="center">Không có cuộc hẹn nào hôm nay</TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                )}
+                            </Box>
+                        </Box>
+
+                        <Box mt={4}>
+                            <Typography variant="h6" gutterBottom>
+                                Tìm kiếm và thêm mới
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        select
+                                        label="Category"
+                                        value={selectedCategory}
+                                        onChange={(e) => {
+                                            setSelectedCategory(e.target.value);
+                                            setSearchFields([{ field: '', value: '' }]);
+                                            setSearchResults([]);
+                                            setError('');
+                                        }}
+                                        fullWidth
+                                    >
+                                        {categories.map((category) => (
+                                            <MenuItem key={category} value={category}>
+                                                {category}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <IconButton onClick={handleAddModalOpen} color="primary" sx={{ ml: 2 }}>
+                                        <AddIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+
+                            <SearchFields
+                                searchFields={searchFields}
+                                fields={fields}
+                                selectedCategory={selectedCategory}
+                                onFieldChange={handleSearchFieldChange}
+                                onAddField={handleAddSearchField}
+                                onRemoveField={handleRemoveSearchField}
+                            />
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                <IconButton onClick={handleSearch} color="primary" disabled={searchFields.some(field => !field.field || !field.value)}>
+                                    <SearchIcon />
+                                </IconButton>
+                            </Box>
+                            <Typography variant="h6" gutterBottom>
+                                {selectedCategory} Data
+                            </Typography>
+                            {selectedCategory === 'Patients' && (
+                                <PatientList
+                                    searchResults={searchResults}
+                                    handleButtonClick={handleButtonClick}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Staffs' && (
+                                <StaffList
+                                    searchResults={searchResults}
+                                    handleButtonClick={handleButtonClick}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Doctors' && (
+                                <DoctorList
+                                    searchResults={searchResults}
+                                    handleButtonClick={handleButtonClick}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Appointments' && (
+                                <AppointmentList
+                                    searchResults={searchResults}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Medicalrecords' && (
+                                <MedicalrecordList
+                                    searchResults={searchResults}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Departments' && (
+                                <DepartmentList
+                                    searchResults={searchResults}
+                                    handleEditClick={handleEditClick}
+                                    handleDeleteClick={handleDeleteClick}
+                                />
+                            )}
+                            {selectedCategory === 'Feedbacks' && isFeedbackModalOpen && (
+                                <FeedbackListWithReply onClose={() => setIsFeedbackModalOpen(false)} />
+                            )}
+                        </Box>
                     </Container>
                 </Box>
                 <Modal
@@ -395,7 +478,9 @@ const AdminDashboard = () => {
                             <ul>
                                 {appointments.map((appointment, index) => (
                                     <li key={index}>
-                                        Date: {new Date(appointment.appointment_date).toLocaleDateString()}, Time: {appointment.slot}, Status: {appointment.status}, Doctor: {appointment.doctor[0].doctor_name}, Payment: {appointment.payment_name}, Price: {appointment.price}
+                                        Date: {new Date(appointment.appointment_date).toLocaleDateString()},
+                                        Time: {appointment.slot}, Status: {appointment.status},
+                                        Doctor: {appointment.doctor[0].doctor_name}
                                     </li>
                                 ))}
                             </ul>
@@ -492,6 +577,7 @@ const AdminDashboard = () => {
             </Box>
         </ThemeProvider>
     );
+
 };
 
 export default AdminDashboard;
