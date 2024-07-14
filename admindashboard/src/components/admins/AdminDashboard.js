@@ -22,6 +22,9 @@ import {
     Toolbar,
     Container,
     CssBaseline,
+    FormControl,
+    InputLabel,
+    Select,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -333,7 +336,7 @@ const AdminDashboard = () => {
                     </Toolbar>
                 </AppBar>
                 <Sidebar setSelectedCategory={setSelectedCategory} onInboxClick={handleInboxClick} />
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
                     <Toolbar />
                     <Container>
                         {error && <Typography color="error">{error}</Typography>}
@@ -427,48 +430,64 @@ const AdminDashboard = () => {
                             <Typography variant="h6" gutterBottom>
                                 Tìm kiếm và thêm mới
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} alignItems="flex-end">
                                 <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        select
-                                        label="Category"
-                                        value={selectedCategory}
-                                        onChange={(e) => {
-                                            setSelectedCategory(e.target.value);
-                                            setSearchFields([{ field: '', value: '' }]);
-                                            setSearchResults([]);
-                                            setError('');
-                                        }}
-                                        fullWidth
-                                    >
-                                        {categories.map((category) => (
-                                            <MenuItem key={category} value={category}>
-                                                {category}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>Category</InputLabel>
+                                        <Select
+                                            label="Category"
+                                            value={selectedCategory}
+                                            onChange={(e) => {
+                                                setSelectedCategory(e.target.value);
+                                                setSearchFields([{ field: '', value: '' }]);
+                                                setSearchResults([]);
+                                                setError('');
+                                            }}
+                                        >
+                                            {categories.map((category) => (
+                                                <MenuItem key={category} value={category}>
+                                                    {category}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
-                                    <IconButton onClick={handleAddModalOpen} color="primary" sx={{ ml: 2 }}>
-                                        <AddIcon />
-                                    </IconButton>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<AddIcon />}
+                                        onClick={handleAddModalOpen}
+                                        fullWidth
+                                    >
+                                        Thêm mới
+                                    </Button>
                                 </Grid>
                             </Grid>
 
-                            <SearchFields
-                                searchFields={searchFields}
-                                fields={fields}
-                                selectedCategory={selectedCategory}
-                                onFieldChange={handleSearchFieldChange}
-                                onAddField={handleAddSearchField}
-                                onRemoveField={handleRemoveSearchField}
-                            />
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                <IconButton onClick={handleSearch} color="primary" disabled={searchFields.some(field => !field.field || !field.value)}>
-                                    <SearchIcon />
-                                </IconButton>
+                            <Box mt={2}>
+                                <SearchFields
+                                    searchFields={searchFields}
+                                    fields={fields}
+                                    selectedCategory={selectedCategory}
+                                    onFieldChange={handleSearchFieldChange}
+                                    onAddField={handleAddSearchField}
+                                    onRemoveField={handleRemoveSearchField}
+                                />
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<SearchIcon />}
+                                        onClick={handleSearch}
+                                        disabled={searchFields.some(field => !field.field || !field.value)}
+                                    >
+                                        Tìm kiếm
+                                    </Button>
+                                </Box>
                             </Box>
-                            <Typography variant="h6" gutterBottom>
+
+                            <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
                                 {selectedCategory} Data
                             </Typography>
                             {selectedCategory === 'Patients' && (
