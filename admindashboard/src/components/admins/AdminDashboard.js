@@ -7,18 +7,26 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Paper
+    Paper,
+    Card,
+    CardContent,
+    Typography,
+    Grid,
+    IconButton,
+    Button,
+    TextField,
+    MenuItem,
+    Modal,
+    Box,
+    AppBar,
+    Toolbar,
+    Container,
+    CssBaseline,
 } from '@mui/material';
-import AppointmentsChart from "./AppointmentsChart";
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import { IconButton, TextField, MenuItem, Modal, Button, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import axios from 'axios';
+import AppointmentsChart from "./AppointmentsChart";
 import Sidebar from './Sidebar';
 import SearchFields from './SearchFields';
 import EditPatientModal from './EditPatientModal';
@@ -34,7 +42,6 @@ import AppointmentList from './AppointmentList';
 import MedicalrecordList from './MedicalrecordList';
 import DepartmentList from './DepartmentList';
 import FeedbackListWithReply from './FeedbackListWithReply';
-import axios from 'axios';
 
 const lightTheme = createTheme({
     palette: {
@@ -75,9 +82,11 @@ const AdminDashboard = () => {
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
+    const [appointmentsRange, setAppointmentsRange] = useState([]);
 
     useEffect(() => {
         fetchTodayAppointments();
+        fetchAppointmentsRange();
         fetchAllFields(setFields, setError);
     }, []);
 
@@ -91,6 +100,30 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Lỗi khi lấy cuộc hẹn hôm nay', error);
             setError('Lỗi khi lấy cuộc hẹn hôm nay');
+        }
+    };
+
+    const fetchAppointmentsRange = async () => {
+        try {
+            const today = new Date();
+            const tenDaysAgo = new Date();
+            tenDaysAgo.setDate(today.getDate() - 10);
+            const threeDaysLater = new Date();
+            threeDaysLater.setDate(today.getDate() + 3);
+
+            const response = await axios.get('http://localhost:8080/api/v1/appointments/list');
+            const allAppointments = response.data;
+
+            const filteredAppointments = allAppointments.filter(appointment => {
+                const medicalDay = new Date(appointment.medical_day);
+                return medicalDay >= tenDaysAgo && medicalDay <= threeDaysLater;
+            });
+
+            console.log('Filtered Data:', filteredAppointments);
+            setAppointmentsRange(filteredAppointments);
+        } catch (error) {
+            console.error('Error fetching appointments range', error);
+            setError('Error fetching appointments range');
         }
     };
 
@@ -310,48 +343,83 @@ const AdminDashboard = () => {
                                 <Typography variant="h6" gutterBottom>
                                     Biểu đồ thống kê cuộc hẹn
                                 </Typography>
-                                <AppointmentsChart appointments={todayAppointments} />
+                                <AppointmentsChart appointments={appointmentsRange} />
                             </Box>
 
                             <Box sx={{ width: '45%' }}>
                                 <Typography variant="h6" gutterBottom>
                                     Thống kê theo nút
                                 </Typography>
-                                <Button variant="contained" color="primary" onClick={handleShowTodayAppointments}>
-                                    {showTodayAppointments ? "Ẩn cuộc hẹn hôm nay" : "Hiển thị cuộc hẹn hôm nay"}
-                                </Button>
-                                {showTodayAppointments && (
-                                    <TableContainer component={Paper} sx={{ mt: 2 }}>
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Thời gian</TableCell>
-                                                    <TableCell>Bệnh nhân</TableCell>
-                                                    <TableCell>Bác sĩ</TableCell>
-                                                    <TableCell>Trạng thái</TableCell>
-                                                    <TableCell>Giá</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {todayAppointments.length > 0 ? (
-                                                    todayAppointments.map((appointment, index) => (
-                                                        <TableRow key={index}>
-                                                            <TableCell>{new Date(appointment.appointment_date).toLocaleString()}</TableCell>
-                                                            <TableCell>{appointment.patient[0]?.patient_name}</TableCell>
-                                                            <TableCell>{appointment.doctor[0]?.doctor_name}</TableCell>
-                                                            <TableCell>{appointment.status}</TableCell>
-                                                            <TableCell>{appointment.price}</TableCell>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <Button variant="contained" color="primary" onClick={handleShowTodayAppointments} fullWidth>
+                                            {showTodayAppointments ? "Ẩn cuộc hẹn hôm nay" : "Hiển thị cuộc hẹn hôm nay"}
+                                        </Button>
+                                    </Grid>
+                                    {showTodayAppointments && (
+                                        <Grid item xs={12}>
+                                            <TableContainer component={Paper}>
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>Thời gian</TableCell>
+                                                            <TableCell>Bệnh nhân</TableCell>
+                                                            <TableCell>Bác sĩ</TableCell>
+                                                            <TableCell>Trạng thái</TableCell>
+                                                            <TableCell>Giá</TableCell>
                                                         </TableRow>
-                                                    ))
-                                                ) : (
-                                                    <TableRow>
-                                                        <TableCell colSpan={5} align="center">Không có cuộc hẹn nào hôm nay</TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                )}
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {todayAppointments.length > 0 ? (
+                                                            todayAppointments.map((appointment, index) => (
+                                                                <TableRow key={index}>
+                                                                    <TableCell>{new Date(appointment.appointment_date).toLocaleString()}</TableCell>
+                                                                    <TableCell>{appointment.patient[0]?.patient_name}</TableCell>
+                                                                    <TableCell>{appointment.doctor[0]?.doctor_name}</TableCell>
+                                                                    <TableCell>{appointment.status}</TableCell>
+                                                                    <TableCell>{appointment.price}</TableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        ) : (
+                                                            <TableRow>
+                                                                <TableCell colSpan={5} align="center">Không có cuộc hẹn nào hôm nay</TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </Grid>
+                                    )}
+                                </Grid>
+                                <Grid container spacing={2} sx={{ mt: 2 }}>
+                                    <Grid item xs={12}>
+                                        <Card>
+                                            <CardContent>
+                                                <Typography variant="h6">
+                                                    Tổng số cuộc hẹn
+                                                </Typography>
+                                                <Typography variant="h4">
+                                                    {appointmentsRange.length}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Card>
+                                            <CardContent>
+                                                <Typography variant="h6">
+                                                    Cuộc hẹn trong 3 ngày tới
+                                                </Typography>
+                                                <Typography variant="h4">
+                                                    {appointmentsRange.filter(appointment => {
+                                                        const medicalDay = new Date(appointment.medical_day);
+                                                        return medicalDay > new Date();
+                                                    }).length}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
                             </Box>
                         </Box>
 
@@ -577,7 +645,6 @@ const AdminDashboard = () => {
             </Box>
         </ThemeProvider>
     );
-
 };
 
 export default AdminDashboard;
