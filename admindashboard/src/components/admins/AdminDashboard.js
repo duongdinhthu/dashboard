@@ -28,6 +28,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import { AccountCircle, Group, LocalHospital } from '@mui/icons-material';
 import axios from 'axios';
 import AppointmentsChart from "./AppointmentsChart";
 import Sidebar from './Sidebar';
@@ -45,6 +46,7 @@ import AppointmentList from './AppointmentList';
 import MedicalrecordList from './MedicalrecordList';
 import DepartmentList from './DepartmentList';
 import FeedbackListWithReply from './FeedbackListWithReply';
+import StatisticsCard from './StatisticsCard'; // Import component StatisticsCard mới
 
 const lightTheme = createTheme({
     palette: {
@@ -86,12 +88,40 @@ const AdminDashboard = () => {
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [appointmentsRange, setAppointmentsRange] = useState([]);
+    const [stats, setStats] = useState({
+        doctors: 0,
+        workingDoctors: 0,
+        patients: 0,
+        appointments: 0,
+    });
 
     useEffect(() => {
         fetchTodayAppointments();
         fetchAppointmentsRange();
         fetchAllFields(setFields, setError);
+        fetchStats();
     }, []);
+
+    const fetchStats = async () => {
+        try {
+            const [doctorsRes, patientsRes, appointmentsRes] = await Promise.all([
+                axios.get('http://localhost:8080/api/v1/doctors/list'),
+                axios.get('http://localhost:8080/api/v1/patients/list'),
+                axios.get('http://localhost:8080/api/v1/appointments/list')
+            ]);
+
+            const workingDoctors = doctorsRes.data.filter(doctor => doctor.working_status === 'Working').length;
+
+            setStats({
+                doctors: doctorsRes.data.length,
+                workingDoctors,
+                patients: patientsRes.data.length,
+                appointments: appointmentsRes.data.length,
+            });
+        } catch (error) {
+            console.error('Error fetching statistics', error);
+        }
+    };
 
     const fetchTodayAppointments = async () => {
         try {
@@ -168,6 +198,7 @@ const AdminDashboard = () => {
                             doctor_address: item.doctor_address,
                             doctor_email: item.doctor_email,
                             department_id: item.department_id,
+                            working_status: item.working_status, // Add working status field
                             appointment_count: item.appointmentsList?.length || 0,
                             medicalrecord_count: item.medicalrecordsList?.length || 0,
                             appointmentsList: item.appointmentsList,
@@ -341,22 +372,49 @@ const AdminDashboard = () => {
                     <Container>
                         {error && <Typography color="error">{error}</Typography>}
 
+                        <Grid container spacing={2} sx={{ mb: 4 }}>
+                            <StatisticsCard
+                                title="Total Doctors"
+                                value={stats.doctors}
+                                increase="5% increase in 30 days"
+                                icon={<LocalHospital />}
+                            />
+                            <StatisticsCard
+                                title="Working Doctors"
+                                value={stats.workingDoctors}
+                                increase="2% increase in 30 days"
+                                icon={<LocalHospital />}
+                            />
+                            <StatisticsCard
+                                title="Total Patients"
+                                value={stats.patients}
+                                increase="10% increase in 30 days"
+                                icon={<Group />}
+                            />
+                            <StatisticsCard
+                                title="Total Appointments"
+                                value={stats.appointments}
+                                increase="15% increase in 30 days"
+                                icon={<AccountCircle />}
+                            />
+                        </Grid>
+
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Box sx={{ width: '50%' }}>
                                 <Typography variant="h6" gutterBottom>
-                                    Biểu đồ thống kê cuộc hẹn
+                                    Appointment Statistics
                                 </Typography>
                                 <AppointmentsChart appointments={appointmentsRange} />
                             </Box>
 
                             <Box sx={{ width: '45%' }}>
                                 <Typography variant="h6" gutterBottom>
-                                    Thống kê theo nút
+                                    Today's Appointments
                                 </Typography>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
                                         <Button variant="contained" color="primary" onClick={handleShowTodayAppointments} fullWidth>
-                                            {showTodayAppointments ? "Ẩn cuộc hẹn hôm nay" : "Hiển thị cuộc hẹn hôm nay"}
+                                            {showTodayAppointments ? "Hide Today's Appointments" : "Show Today's Appointments"}
                                         </Button>
                                     </Grid>
                                     {showTodayAppointments && (
@@ -365,11 +423,11 @@ const AdminDashboard = () => {
                                                 <Table>
                                                     <TableHead>
                                                         <TableRow>
-                                                            <TableCell>Thời gian</TableCell>
-                                                            <TableCell>Bệnh nhân</TableCell>
-                                                            <TableCell>Bác sĩ</TableCell>
-                                                            <TableCell>Trạng thái</TableCell>
-                                                            <TableCell>Giá</TableCell>
+                                                            <TableCell>Time</TableCell>
+                                                            <TableCell>Patient</TableCell>
+                                                            <TableCell>Doctor</TableCell>
+                                                            <TableCell>Status</TableCell>
+                                                            <TableCell>Price</TableCell>
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -385,7 +443,7 @@ const AdminDashboard = () => {
                                                             ))
                                                         ) : (
                                                             <TableRow>
-                                                                <TableCell colSpan={5} align="center">Không có cuộc hẹn nào hôm nay</TableCell>
+                                                                <TableCell colSpan={5} align="center">No appointments today</TableCell>
                                                             </TableRow>
                                                         )}
                                                     </TableBody>
@@ -399,7 +457,7 @@ const AdminDashboard = () => {
                                         <Card>
                                             <CardContent>
                                                 <Typography variant="h6">
-                                                    Tổng số cuộc hẹn
+                                                    Total Appointments
                                                 </Typography>
                                                 <Typography variant="h4">
                                                     {appointmentsRange.length}
@@ -411,7 +469,7 @@ const AdminDashboard = () => {
                                         <Card>
                                             <CardContent>
                                                 <Typography variant="h6">
-                                                    Cuộc hẹn trong 3 ngày tới
+                                                    Appointments in Next 3 Days
                                                 </Typography>
                                                 <Typography variant="h4">
                                                     {appointmentsRange.filter(appointment => {
@@ -428,7 +486,7 @@ const AdminDashboard = () => {
 
                         <Box mt={4}>
                             <Typography variant="h6" gutterBottom>
-                                Tìm kiếm và thêm mới
+                                Search and Add New
                             </Typography>
                             <Grid container spacing={2} alignItems="flex-end">
                                 <Grid item xs={12} sm={6}>
@@ -460,7 +518,7 @@ const AdminDashboard = () => {
                                         onClick={handleAddModalOpen}
                                         fullWidth
                                     >
-                                        Thêm mới
+                                        Add New
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -482,7 +540,7 @@ const AdminDashboard = () => {
                                         onClick={handleSearch}
                                         disabled={searchFields.some(field => !field.field || !field.value)}
                                     >
-                                        Tìm kiếm
+                                        Search
                                     </Button>
                                 </Box>
                             </Box>

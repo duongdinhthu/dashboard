@@ -9,6 +9,7 @@ const DoctorList = ({ searchResults, handleButtonClick, handleEditClick, handleD
         { field: 'doctor_phone', headerName: 'Phone', width: 150 },
         { field: 'doctor_address', headerName: 'Address', width: 200 },
         { field: 'doctor_email', headerName: 'Email', width: 200 },
+        { field: 'working_status', headerName: 'Working Status', width: 150 },  // New column for working status
         {
             field: 'actions',
             headerName: 'Actions',
