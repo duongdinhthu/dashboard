@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const AppointmentList = ({ searchResults, handleEditClick, handleDeleteClick }) => {
+    const getPatientName = (appointment) => {
+        return appointment.patient && appointment.patient.length > 0 ? appointment.patient[0].patient_name : 'N/A';
+    };
+
+    const getDoctorName = (appointment) => {
+        return appointment.doctor && appointment.doctor.length > 0 ? appointment.doctor[0].doctor_name : 'N/A';
+    };
+
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -24,8 +32,8 @@ const AppointmentList = ({ searchResults, handleEditClick, handleDeleteClick }) 
                     {searchResults.map((appointment) => (
                         <TableRow key={appointment.appointment_id}>
                             <TableCell>{appointment.appointment_id}</TableCell>
-                            <TableCell>{appointment.patient_name}</TableCell>
-                            <TableCell>{appointment.doctor_name}</TableCell>
+                            <TableCell>{getPatientName(appointment)}</TableCell>
+                            <TableCell>{getDoctorName(appointment)}</TableCell>
                             <TableCell>{appointment.appointment_date}</TableCell>
                             <TableCell>{appointment.slot}</TableCell>
                             <TableCell>{appointment.status}</TableCell>

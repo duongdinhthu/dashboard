@@ -5,48 +5,25 @@ import {
     Table,
     TableHead,
     TableRow,
-    TableCell,
+    TableCell, Card, CardContent,
     TableBody,
     Paper,
-    Card,
-    CardContent,
     Typography,
     Grid,
-    IconButton,
     Button,
-    TextField,
-    MenuItem,
     Modal,
     Box,
     AppBar,
     Toolbar,
     Container,
     CssBaseline,
-    FormControl,
-    InputLabel,
-    Select,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
 import { AccountCircle, Group, LocalHospital } from '@mui/icons-material';
 import axios from 'axios';
 import AppointmentsChart from "./AppointmentsChart";
 import Sidebar from './Sidebar';
-import SearchFields from './SearchFields';
-import EditPatientModal from './EditPatientModal';
-import EditStaffModal from './EditStaffModal';
-import EditDoctorModal from './EditDoctorModal';
-import EditAppointmentModal from './EditAppointmentModal';
-import EditMedicalrecordModal from './EditMedicalrecordModal';
-import EditDepartmentModal from './EditDepartmentModal';
-import PatientList from './PatientList';
-import StaffList from './StaffList';
-import DoctorList from './DoctorList';
-import AppointmentList from './AppointmentList';
-import MedicalrecordList from './MedicalrecordList';
-import DepartmentList from './DepartmentList';
+import StatisticsCard from './StatisticsCard';
 import FeedbackListWithReply from './FeedbackListWithReply';
-import StatisticsCard from './StatisticsCard'; // Import component StatisticsCard mới
 
 const lightTheme = createTheme({
     palette: {
@@ -54,69 +31,51 @@ const lightTheme = createTheme({
     },
 });
 
-const categories = ['Patients', 'Staffs', 'Doctors', 'Appointments', 'Departments', 'Medicalrecords'];
-
-const fetchAllFields = async (setFields, setError) => {
-    try {
-        const requests = categories.map(category =>
-            axios.get(`http://localhost:8080/api/v1/fields/${category.toLowerCase()}`)
-        );
-        const responses = await Promise.all(requests);
-        const fieldsData = responses.reduce((acc, response, index) => {
-            acc[categories[index]] = response.data;
-            return acc;
-        }, {});
-        setFields(fieldsData);
-    } catch (error) {
-        console.error('Error fetching fields', error);
-        setError('Error fetching fields');
-    }
-};
-
 const AdminDashboard = () => {
-    const [fields, setFields] = useState({});
-    const [searchFields, setSearchFields] = useState([{ field: '', value: '' }]);
     const [searchResults, setSearchResults] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
     const [error, setError] = useState('');
     const [appointments, setAppointments] = useState([]);
     const [open, setOpen] = useState(false);
-    const [editItem, setEditItem] = useState(null);
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [newData, setNewData] = useState({});
+    const [isDoctorsModalOpen, setIsDoctorsModalOpen] = useState(false);
+    const [isPatientsModalOpen, setIsPatientsModalOpen] = useState(false);
+    const [isAppointmentsModalOpen, setIsAppointmentsModalOpen] = useState(false);
+    const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [appointmentsRange, setAppointmentsRange] = useState([]);
     const [stats, setStats] = useState({
         doctors: 0,
-        workingDoctors: 0,
         patients: 0,
         appointments: 0,
+        staff: 0,
     });
 
     useEffect(() => {
         fetchTodayAppointments();
         fetchAppointmentsRange();
-        fetchAllFields(setFields, setError);
         fetchStats();
     }, []);
 
     const fetchStats = async () => {
         try {
-            const [doctorsRes, patientsRes, appointmentsRes] = await Promise.all([
+            const [doctorsRes, patientsRes, appointmentsRes, staffRes] = await Promise.all([
                 axios.get('http://localhost:8080/api/v1/doctors/list'),
                 axios.get('http://localhost:8080/api/v1/patients/list'),
-                axios.get('http://localhost:8080/api/v1/appointments/list')
+                axios.get('http://localhost:8080/api/v1/appointments/list'),
+                axios.get('http://localhost:8080/api/v1/staffs/list')
             ]);
 
-            const workingDoctors = doctorsRes.data.filter(doctor => doctor.working_status === 'Working').length;
+            console.log('Doctors Data:', doctorsRes.data);
+            console.log('Patients Data:', patientsRes.data);
+            console.log('Appointments Data:', appointmentsRes.data);
+            console.log('Staff Data:', staffRes.data);
 
             setStats({
                 doctors: doctorsRes.data.length,
-                workingDoctors,
                 patients: patientsRes.data.length,
                 appointments: appointmentsRes.data.length,
+                staff: staffRes.data.length,
             });
         } catch (error) {
             console.error('Error fetching statistics', error);
@@ -160,199 +119,98 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleSearch = () => {
-        const params = searchFields.reduce((acc, searchField) => {
-            acc[searchField.field] = searchField.value;
-            return acc;
-        }, {});
-
-        axios.get(`http://localhost:8080/api/v1/${selectedCategory.toLowerCase()}/search`, { params })
-            .then(response => {
-                const flatData = response.data.map(item => {
-                    if (selectedCategory === 'Patients') {
-                        return {
-                            patient_id: item.patient_id,
-                            patient_name: item.patient_name,
-                            patient_email: item.patient_email,
-                            patient_phone: item.patient_phone,
-                            patient_address: item.patient_address,
-                            appointment_count: item.appointmentsList?.length || 0,
-                            medicalrecord_count: item.medicalrecordsList?.length || 0,
-                            appointmentsList: item.appointmentsList,
-                        };
-                    } else if (selectedCategory === 'Staffs') {
-                        return {
-                            staff_id: item.staff_id,
-                            staff_name: item.staff_name,
-                            staff_phone: item.staff_phone,
-                            staff_address: item.staff_address,
-                            staff_type: item.staff_type,
-                            staff_status: item.staff_status,
-                            appointmentsList: item.appointmentsList,
-                        };
-                    } else if (selectedCategory === 'Doctors') {
-                        return {
-                            doctor_id: item.doctor_id,
-                            doctor_name: item.doctor_name,
-                            doctor_phone: item.doctor_phone,
-                            doctor_address: item.doctor_address,
-                            doctor_email: item.doctor_email,
-                            department_id: item.department_id,
-                            working_status: item.working_status, // Add working status field
-                            appointment_count: item.appointmentsList?.length || 0,
-                            medicalrecord_count: item.medicalrecordsList?.length || 0,
-                            appointmentsList: item.appointmentsList,
-                        };
-                    } else if (selectedCategory === 'Appointments') {
-                        return {
-                            appointment_id: item.appointment_id,
-                            patient_name: item.patient?.[0]?.patient_name,
-                            doctor_name: item.doctor?.[0]?.doctor_name,
-                            appointment_date: item.appointment_date,
-                            slot: item.slot,
-                            status: item.status,
-                            payment_name: item.payment_name,
-                            price: item.price,
-                        };
-                    } else if (selectedCategory === 'Medicalrecords') {
-                        return {
-                            record_id: item.record_id,
-                            patient_name: item.patients?.[0]?.patient_name,
-                            doctor_name: item.doctors?.[0]?.doctor_name,
-                            symptoms: item.symptoms,
-                            diagnosis: item.diagnosis,
-                            treatment: item.treatment,
-                            prescription: item.prescription,
-                            follow_up_date: item.follow_up_date,
-                        };
-                    } else if (selectedCategory === 'Departments') {
-                        return {
-                            department_id: item.department_id,
-                            department_name: item.department_name,
-                            location: item.location,
-                            doctor_count: item.doctorsList?.length || 0,
-                        };
-                    }
-                    return item;
-                });
-                setSearchResults(flatData);
-            })
-            .catch(error => {
-                console.error('Error fetching search results', error);
-                setError('Error fetching search results');
-            });
+    const handleOpenDoctorsModal = () => {
+        setIsDoctorsModalOpen(true);
+        fetchDoctorsData();
     };
 
-    const handleAddSearchField = () => {
-        setSearchFields([...searchFields, { field: fields[selectedCategory][0]?.field || '', value: '' }]);
+    const handleCloseDoctorsModal = () => setIsDoctorsModalOpen(false);
+
+    const handleOpenPatientsModal = () => {
+        setIsPatientsModalOpen(true);
+        fetchPatientsData();
     };
 
-    const handleRemoveSearchField = (index) => {
-        const newSearchFields = [...searchFields];
-        newSearchFields.splice(index, 1);
-        setSearchFields(newSearchFields);
+    const handleClosePatientsModal = () => setIsPatientsModalOpen(false);
+
+    const handleOpenAppointmentsModal = () => {
+        setIsAppointmentsModalOpen(true);
+        fetchAppointmentsData();
     };
 
-    const handleSearchFieldChange = (index, key, value) => {
-        const newSearchFields = [...searchFields];
-        newSearchFields[index][key] = value;
-        setSearchFields(newSearchFields);
+    const handleCloseAppointmentsModal = () => setIsAppointmentsModalOpen(false);
+
+    const handleOpenStaffModal = () => {
+        setIsStaffModalOpen(true);
+        fetchStaffData();
     };
 
-    const handleButtonClick = async (itemId) => {
+    const handleCloseStaffModal = () => setIsStaffModalOpen(false);
+
+    const handleOpenFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const handleCloseFeedbackModal = () => setIsFeedbackModalOpen(false);
+
+    const fetchDoctorsData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/${selectedCategory.toLowerCase()}/${itemId}/appointments`);
-            setAppointments(response.data);
-            setOpen(true);
+            const response = await axios.get('http://localhost:8080/api/v1/doctors/list');
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('Error fetching doctors', error);
+        }
+    };
+
+    const fetchPatientsData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/patients/list');
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('Error fetching patients', error);
+        }
+    };
+
+    const fetchAppointmentsData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/appointments/list');
+            const sortedData = response.data.sort((a, b) => new Date(b.medical_day) - new Date(a.medical_day));
+            setSearchResults(sortedData);
         } catch (error) {
             console.error('Error fetching appointments', error);
-            setError('Error fetching appointments');
         }
     };
 
-    const handleClose = () => {
-        setOpen(false);
-        setAppointments([]);
-    };
-
-    const handleEditClick = (item) => {
-        setEditItem(item);
-    };
-
-    const handleDeleteClick = (itemId) => {
-        const payload = {};
-        if (selectedCategory === 'Medicalrecords') {
-            payload.record_id = itemId;
-        } else {
-            payload[`${selectedCategory.toLowerCase().slice(0, -1)}_id`] = itemId;
+    const fetchStaffData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/staffs/list');
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('Error fetching staff', error);
         }
-
-        axios.delete(`http://localhost:8080/api/v1/${selectedCategory.toLowerCase()}/delete`, { data: payload })
-            .then(response => {
-                setSearchResults(searchResults.filter(item => item[`${selectedCategory.toLowerCase().slice(0, -1)}_id`] !== itemId));
-            })
-            .catch(error => {
-                console.error('Error deleting item', error);
-                setError('Error deleting item');
-            });
-    };
-
-    const handleEditModalClose = () => {
-        setEditItem(null);
-    };
-
-    const handleAddModalOpen = () => {
-        setIsAddModalOpen(true);
-        setNewData({});
-    };
-
-    const handleAddModalClose = () => {
-        setIsAddModalOpen(false);
-    };
-
-    const handleNewDataChange = (key, value) => {
-        setNewData(prevData => ({
-            ...prevData,
-            [key]: value,
-        }));
-    };
-
-    const handleAddNewData = () => {
-        const dataToSend = { ...newData };
-        Object.keys(dataToSend).forEach(key => {
-            if (key.toLowerCase().includes('id')) {
-                delete dataToSend[key];
-            }
-        });
-
-        axios.post(`http://localhost:8080/api/v1/${selectedCategory.toLowerCase()}/insert`, dataToSend)
-            .then(response => {
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Error adding new data', error);
-                setError('Error adding new data');
-            });
-    };
-
-    const handleSaveEdit = (updatedItem) => {
-        setSearchResults((prevResults) =>
-            prevResults.map((item) =>
-                item[`${selectedCategory.toLowerCase().slice(0, -1)}_id`] === updatedItem[`${selectedCategory.toLowerCase().slice(0, -1)}_id`]
-                    ? updatedItem
-                    : item
-            )
-        );
-        setEditItem(null);
-    };
-
-    const handleInboxClick = () => {
-        setSelectedCategory('Feedbacks');
-        setIsFeedbackModalOpen(true);
     };
 
     const handleShowTodayAppointments = () => {
         setShowTodayAppointments(!showTodayAppointments);
+    };
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const convertSlotToTime = (slot) => {
+        const slotMapping = {
+            1: '08:00 AM - 09:00 AM',
+            2: '09:00 AM - 10:00 AM',
+            3: '10:00 AM - 11:00 AM',
+            4: '11:00 AM - 12:00 PM',
+            5: '01:00 PM - 02:00 PM',
+            6: '02:00 PM - 03:00 PM',
+            7: '03:00 PM - 04:00 PM',
+            8: '04:00 PM - 05:00 PM'
+        };
+        return slotMapping[slot] || 'N/A';
     };
 
     return (
@@ -366,7 +224,7 @@ const AdminDashboard = () => {
                         </Typography>
                     </Toolbar>
                 </AppBar>
-                <Sidebar setSelectedCategory={setSelectedCategory} onInboxClick={handleInboxClick} />
+                <Sidebar onInboxClick={handleOpenFeedbackModal} />
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
                     <Toolbar />
                     <Container>
@@ -378,24 +236,28 @@ const AdminDashboard = () => {
                                 value={stats.doctors}
                                 increase="5% increase in 30 days"
                                 icon={<LocalHospital />}
-                            />
-                            <StatisticsCard
-                                title="Working Doctors"
-                                value={stats.workingDoctors}
-                                increase="2% increase in 30 days"
-                                icon={<LocalHospital />}
+                                onClick={handleOpenDoctorsModal}
                             />
                             <StatisticsCard
                                 title="Total Patients"
                                 value={stats.patients}
                                 increase="10% increase in 30 days"
                                 icon={<Group />}
+                                onClick={handleOpenPatientsModal}
                             />
                             <StatisticsCard
                                 title="Total Appointments"
                                 value={stats.appointments}
                                 increase="15% increase in 30 days"
                                 icon={<AccountCircle />}
+                                onClick={handleOpenAppointmentsModal}
+                            />
+                            <StatisticsCard
+                                title="Total Staff"
+                                value={stats.staff}
+                                increase="8% increase in 30 days"
+                                icon={<Group />}
+                                onClick={handleOpenStaffModal}
                             />
                         </Grid>
 
@@ -434,9 +296,9 @@ const AdminDashboard = () => {
                                                         {todayAppointments.length > 0 ? (
                                                             todayAppointments.map((appointment, index) => (
                                                                 <TableRow key={index}>
-                                                                    <TableCell>{new Date(appointment.appointment_date).toLocaleString()}</TableCell>
-                                                                    <TableCell>{appointment.patient[0]?.patient_name}</TableCell>
-                                                                    <TableCell>{appointment.doctor[0]?.doctor_name}</TableCell>
+                                                                    <TableCell>{`${convertSlotToTime(appointment.slot)} - ${formatDate(appointment.medical_day)}`}</TableCell>
+                                                                    <TableCell>{appointment.patient[0]?.patient_name || "N/A"}</TableCell>
+                                                                    <TableCell>{appointment.doctor[0]?.doctor_name || "N/A"}</TableCell>
                                                                     <TableCell>{appointment.status}</TableCell>
                                                                     <TableCell>{appointment.price}</TableCell>
                                                                 </TableRow>
@@ -483,241 +345,234 @@ const AdminDashboard = () => {
                                 </Grid>
                             </Box>
                         </Box>
-
-                        <Box mt={4}>
-                            <Typography variant="h6" gutterBottom>
-                                Search and Add New
-                            </Typography>
-                            <Grid container spacing={2} alignItems="flex-end">
-                                <Grid item xs={12} sm={6}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <InputLabel>Category</InputLabel>
-                                        <Select
-                                            label="Category"
-                                            value={selectedCategory}
-                                            onChange={(e) => {
-                                                setSelectedCategory(e.target.value);
-                                                setSearchFields([{ field: '', value: '' }]);
-                                                setSearchResults([]);
-                                                setError('');
-                                            }}
-                                        >
-                                            {categories.map((category) => (
-                                                <MenuItem key={category} value={category}>
-                                                    {category}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddModalOpen}
-                                        fullWidth
-                                    >
-                                        Add New
-                                    </Button>
-                                </Grid>
-                            </Grid>
-
-                            <Box mt={2}>
-                                <SearchFields
-                                    searchFields={searchFields}
-                                    fields={fields}
-                                    selectedCategory={selectedCategory}
-                                    onFieldChange={handleSearchFieldChange}
-                                    onAddField={handleAddSearchField}
-                                    onRemoveField={handleRemoveSearchField}
-                                />
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<SearchIcon />}
-                                        onClick={handleSearch}
-                                        disabled={searchFields.some(field => !field.field || !field.value)}
-                                    >
-                                        Search
-                                    </Button>
-                                </Box>
-                            </Box>
-
-                            <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-                                {selectedCategory} Data
-                            </Typography>
-                            {selectedCategory === 'Patients' && (
-                                <PatientList
-                                    searchResults={searchResults}
-                                    handleButtonClick={handleButtonClick}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Staffs' && (
-                                <StaffList
-                                    searchResults={searchResults}
-                                    handleButtonClick={handleButtonClick}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Doctors' && (
-                                <DoctorList
-                                    searchResults={searchResults}
-                                    handleButtonClick={handleButtonClick}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Appointments' && (
-                                <AppointmentList
-                                    searchResults={searchResults}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Medicalrecords' && (
-                                <MedicalrecordList
-                                    searchResults={searchResults}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Departments' && (
-                                <DepartmentList
-                                    searchResults={searchResults}
-                                    handleEditClick={handleEditClick}
-                                    handleDeleteClick={handleDeleteClick}
-                                />
-                            )}
-                            {selectedCategory === 'Feedbacks' && isFeedbackModalOpen && (
-                                <FeedbackListWithReply onClose={() => setIsFeedbackModalOpen(false)} />
-                            )}
-                        </Box>
                     </Container>
                 </Box>
                 <Modal
-                    open={open}
-                    onClose={handleClose}
+                    open={isDoctorsModalOpen}
+                    onClose={handleCloseDoctorsModal}
                     aria-labelledby="modal-title"
                     aria-describedby="modal-description"
+                    sx={{ overflowY: 'auto' }}
                 >
                     <Box sx={{
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: 400,
+                        width: '80%',
+                        maxHeight: '80%',
                         bgcolor: 'background.paper',
                         border: '2px solid #000',
                         boxShadow: 24,
-                        p: 4
+                        p: 4,
+                        overflowY: 'auto',
                     }}>
                         <Typography id="modal-title" variant="h6" component="h2">
-                            Appointments
+                            Total Doctors
                         </Typography>
-                        {appointments.length > 0 ? (
-                            <ul>
-                                {appointments.map((appointment, index) => (
-                                    <li key={index}>
-                                        Date: {new Date(appointment.appointment_date).toLocaleDateString()},
-                                        Time: {appointment.slot}, Status: {appointment.status},
-                                        Doctor: {appointment.doctor[0].doctor_name}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <Typography>No appointments available.</Typography>
-                        )}
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Phone</TableCell>
+                                        <TableCell>Address</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map((doctor, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{doctor.doctor_id}</TableCell>
+                                                <TableCell>{doctor.doctor_name}</TableCell>
+                                                <TableCell>{doctor.doctor_email}</TableCell>
+                                                <TableCell>{doctor.doctor_phone}</TableCell>
+                                                <TableCell>{doctor.doctor_address}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No doctors found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Box>
                 </Modal>
                 <Modal
-                    open={isAddModalOpen}
-                    onClose={handleAddModalClose}
-                    aria-labelledby="add-modal-title"
-                    aria-describedby="add-modal-description"
+                    open={isPatientsModalOpen}
+                    onClose={handleClosePatientsModal}
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    sx={{ overflowY: 'auto' }}
                 >
                     <Box sx={{
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: 400,
+                        width: '80%',
+                        maxHeight: '80%',
                         bgcolor: 'background.paper',
                         border: '2px solid #000',
                         boxShadow: 24,
-                        p: 4
+                        p: 4,
+                        overflowY: 'auto',
                     }}>
-                        <Typography id="add-modal-title" variant="h6" component="h2">
-                            Add New {selectedCategory.slice(0, -1)}
+                        <Typography id="modal-title" variant="h6" component="h2">
+                            Total Patients
                         </Typography>
-                        <Grid container spacing={2}>
-                            {fields[selectedCategory]?.filter(field => !field.field.toLowerCase().includes('id')).map((field) => (
-                                <Grid item xs={12} key={field.field}>
-                                    <TextField
-                                        label={field.field}
-                                        value={newData[field.field] || ''}
-                                        onChange={(e) => handleNewDataChange(field.field, e.target.value)}
-                                        type={field.field.toLowerCase().includes('date') ? 'date' : 'text'}
-                                        fullWidth
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button onClick={handleAddModalClose} color="secondary" sx={{ mr: 1 }}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleAddNewData} color="primary" variant="contained">
-                                Add
-                            </Button>
-                        </Box>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Phone</TableCell>
+                                        <TableCell>Address</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map((patient, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{patient.patient_id}</TableCell>
+                                                <TableCell>{patient.patient_name}</TableCell>
+                                                <TableCell>{patient.patient_email}</TableCell>
+                                                <TableCell>{patient.patient_phone}</TableCell>
+                                                <TableCell>{patient.patient_address}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No patients found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Box>
                 </Modal>
-                {selectedCategory === 'Patients' && editItem && (
-                    <EditPatientModal
-                        patient={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-                {selectedCategory === 'Staffs' && editItem && (
-                    <EditStaffModal
-                        staff={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-                {selectedCategory === 'Doctors' && editItem && (
-                    <EditDoctorModal
-                        doctor={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-                {selectedCategory === 'Appointments' && editItem && (
-                    <EditAppointmentModal
-                        appointment={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-                {selectedCategory === 'Medicalrecords' && editItem && (
-                    <EditMedicalrecordModal
-                        medicalRecord={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-                {selectedCategory === 'Departments' && editItem && (
-                    <EditDepartmentModal
-                        department={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
+                <Modal
+                    open={isAppointmentsModalOpen}
+                    onClose={handleCloseAppointmentsModal}
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    sx={{ overflowY: 'auto' }}
+                >
+                    <Box sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '80%',
+                        maxHeight: '80%',
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        overflowY: 'auto',
+                    }}>
+                        <Typography id="modal-title" variant="h6" component="h2">
+                            Total Appointments
+                        </Typography>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Patient</TableCell>
+                                        <TableCell>Doctor</TableCell>
+                                        <TableCell>Date</TableCell>
+                                        <TableCell>Time</TableCell>
+                                        <TableCell>Status</TableCell>
+                                        <TableCell>Price</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map((appointment, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{appointment.appointment_id}</TableCell>
+                                                <TableCell>{appointment.patient && appointment.patient[0] ? appointment.patient[0].patient_name : 'N/A'}</TableCell>
+                                                <TableCell>{appointment.doctor && appointment.doctor[0] ? appointment.doctor[0].doctor_name : 'N/A'}</TableCell>
+                                                <TableCell>{new Date(appointment.medical_day).toLocaleDateString()}</TableCell>
+                                                <TableCell>{convertSlotToTime(appointment.slot)}</TableCell>
+                                                <TableCell>{appointment.status}</TableCell>
+                                                <TableCell>{appointment.price}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={7} align="center">No appointments found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </Modal>
+                <Modal
+                    open={isStaffModalOpen}
+                    onClose={handleCloseStaffModal}
+                    aria-labelledby="modal-title"
+                    aria-describedby="modal-description"
+                    sx={{ overflowY: 'auto' }}
+                >
+                    <Box sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '80%',
+                        maxHeight: '80%',
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        overflowY: 'auto',
+                    }}>
+                        <Typography id="modal-title" variant="h6" component="h2">
+                            Total Staff
+                        </Typography>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Phone</TableCell>
+                                        <TableCell>Address</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map((staff, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{staff.staff_id}</TableCell>
+                                                <TableCell>{staff.staff_name}</TableCell>
+                                                <TableCell>{staff.staff_email}</TableCell>
+                                                <TableCell>{staff.staff_phone}</TableCell>
+                                                <TableCell>{staff.staff_address}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No staff found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </Modal>
+                {isFeedbackModalOpen && (
+                    <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
                 )}
             </Box>
         </ThemeProvider>
