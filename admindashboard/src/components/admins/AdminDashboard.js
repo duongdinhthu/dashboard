@@ -24,6 +24,7 @@ import AppointmentsChart from "./AppointmentsChart";
 import Sidebar from './Sidebar';
 import StatisticsCard from './StatisticsCard';
 import FeedbackListWithReply from './FeedbackListWithReply';
+import { useNavigate } from 'react-router-dom';
 
 const lightTheme = createTheme({
     palette: {
@@ -50,6 +51,7 @@ const AdminDashboard = () => {
         appointments: 0,
         staff: 0,
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTodayAppointments();
@@ -213,15 +215,25 @@ const AdminDashboard = () => {
         return slotMapping[slot] || 'N/A';
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('role');
+        localStorage.removeItem('adminId');
+        navigate('/adminlogin');
+    };
+
     return (
         <ThemeProvider theme={lightTheme}>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Toolbar>
-                        <Typography variant="h6" noWrap component="div">
+                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                             Admin Dashboard
                         </Typography>
+                        <Button color="inherit" onClick={handleLogout}>
+                            Logout
+                        </Button>
                     </Toolbar>
                 </AppBar>
                 <Sidebar onInboxClick={handleOpenFeedbackModal} />

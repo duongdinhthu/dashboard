@@ -14,6 +14,8 @@ const LoginDoctor = () => {
             const response = await axios.post('http://localhost:8080/api/v1/doctors/login', { username, password });
             console.log('Response from server:', response.data); // Log response from server
             if (response.status === 200 && response.data.doctor_id) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('role', 'doctor');
                 localStorage.setItem('doctor_id', response.data.doctor_id); // Lưu doctor_id vào localStorage
                 navigate('/doctordashboard'); // Chuyển hướng đến doctor dashboard sau khi đăng nhập thành công
             } else {
