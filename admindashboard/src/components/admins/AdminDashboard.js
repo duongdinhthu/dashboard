@@ -11,12 +11,12 @@ import {
     Typography,
     Grid,
     Button,
-    Modal,
     Box,
     AppBar,
     Toolbar,
     Container,
     CssBaseline,
+    Modal,
 } from '@mui/material';
 import { AccountCircle, Group, LocalHospital } from '@mui/icons-material';
 import axios from 'axios';
@@ -36,15 +36,11 @@ const AdminDashboard = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState('');
     const [appointments, setAppointments] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [isDoctorsModalOpen, setIsDoctorsModalOpen] = useState(false);
-    const [isPatientsModalOpen, setIsPatientsModalOpen] = useState(false);
-    const [isAppointmentsModalOpen, setIsAppointmentsModalOpen] = useState(false);
-    const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
-    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [appointmentsRange, setAppointmentsRange] = useState([]);
+    const [feedbacks, setFeedbacks] = useState([]);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [stats, setStats] = useState({
         doctors: 0,
         patients: 0,
@@ -57,6 +53,7 @@ const AdminDashboard = () => {
         fetchTodayAppointments();
         fetchAppointmentsRange();
         fetchStats();
+        fetchFeedbacks();
     }, []);
 
     const fetchStats = async () => {
@@ -121,75 +118,21 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleOpenDoctorsModal = () => {
-        setIsDoctorsModalOpen(true);
-        fetchDoctorsData();
+    const fetchFeedbacks = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/feedbacks/list');
+            setFeedbacks(response.data);
+        } catch (error) {
+            console.error('Error fetching feedbacks', error);
+        }
     };
-
-    const handleCloseDoctorsModal = () => setIsDoctorsModalOpen(false);
-
-    const handleOpenPatientsModal = () => {
-        setIsPatientsModalOpen(true);
-        fetchPatientsData();
-    };
-
-    const handleClosePatientsModal = () => setIsPatientsModalOpen(false);
-
-    const handleOpenAppointmentsModal = () => {
-        setIsAppointmentsModalOpen(true);
-        fetchAppointmentsData();
-    };
-
-    const handleCloseAppointmentsModal = () => setIsAppointmentsModalOpen(false);
-
-    const handleOpenStaffModal = () => {
-        setIsStaffModalOpen(true);
-        fetchStaffData();
-    };
-
-    const handleCloseStaffModal = () => setIsStaffModalOpen(false);
 
     const handleOpenFeedbackModal = () => {
         setIsFeedbackModalOpen(true);
     };
 
-    const handleCloseFeedbackModal = () => setIsFeedbackModalOpen(false);
-
-    const fetchDoctorsData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/v1/doctors/list');
-            setSearchResults(response.data);
-        } catch (error) {
-            console.error('Error fetching doctors', error);
-        }
-    };
-
-    const fetchPatientsData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/v1/patients/list');
-            setSearchResults(response.data);
-        } catch (error) {
-            console.error('Error fetching patients', error);
-        }
-    };
-
-    const fetchAppointmentsData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/v1/appointments/list');
-            const sortedData = response.data.sort((a, b) => new Date(b.medical_day) - new Date(a.medical_day));
-            setSearchResults(sortedData);
-        } catch (error) {
-            console.error('Error fetching appointments', error);
-        }
-    };
-
-    const fetchStaffData = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/v1/staffs/list');
-            setSearchResults(response.data);
-        } catch (error) {
-            console.error('Error fetching staff', error);
-        }
+    const handleCloseFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
     };
 
     const handleShowTodayAppointments = () => {
@@ -222,6 +165,22 @@ const AdminDashboard = () => {
         navigate('/adminlogin');
     };
 
+    const handleOpenDoctorsPage = () => {
+        navigate('/doctors');
+    };
+
+    const handleOpenPatientsPage = () => {
+        navigate('/patients');
+    };
+
+    const handleOpenAppointmentsPage = () => {
+        navigate('/appointments');
+    };
+
+    const handleOpenStaffPage = () => {
+        navigate('/staff');
+    };
+
     return (
         <ThemeProvider theme={lightTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -248,28 +207,28 @@ const AdminDashboard = () => {
                                 value={stats.doctors}
                                 increase="5% increase in 30 days"
                                 icon={<LocalHospital />}
-                                onClick={handleOpenDoctorsModal}
+                                onClick={handleOpenDoctorsPage}
                             />
                             <StatisticsCard
                                 title="Total Patients"
                                 value={stats.patients}
                                 increase="10% increase in 30 days"
                                 icon={<Group />}
-                                onClick={handleOpenPatientsModal}
+                                onClick={handleOpenPatientsPage}
                             />
                             <StatisticsCard
                                 title="Total Appointments"
                                 value={stats.appointments}
                                 increase="15% increase in 30 days"
                                 icon={<AccountCircle />}
-                                onClick={handleOpenAppointmentsModal}
+                                onClick={handleOpenAppointmentsPage}
                             />
                             <StatisticsCard
                                 title="Total Staff"
                                 value={stats.staff}
                                 increase="8% increase in 30 days"
                                 icon={<Group />}
-                                onClick={handleOpenStaffModal}
+                                onClick={handleOpenStaffPage}
                             />
                         </Grid>
 
@@ -360,8 +319,8 @@ const AdminDashboard = () => {
                     </Container>
                 </Box>
                 <Modal
-                    open={isDoctorsModalOpen}
-                    onClose={handleCloseDoctorsModal}
+                    open={isFeedbackModalOpen}
+                    onClose={handleCloseFeedbackModal}
                     aria-labelledby="modal-title"
                     aria-describedby="modal-description"
                     sx={{ overflowY: 'auto' }}
@@ -379,213 +338,9 @@ const AdminDashboard = () => {
                         p: 4,
                         overflowY: 'auto',
                     }}>
-                        <Typography id="modal-title" variant="h6" component="h2">
-                            Total Doctors
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Phone</TableCell>
-                                        <TableCell>Address</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {searchResults.length > 0 ? (
-                                        searchResults.map((doctor, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{doctor.doctor_id}</TableCell>
-                                                <TableCell>{doctor.doctor_name}</TableCell>
-                                                <TableCell>{doctor.doctor_email}</TableCell>
-                                                <TableCell>{doctor.doctor_phone}</TableCell>
-                                                <TableCell>{doctor.doctor_address}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={5} align="center">No doctors found</TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
                     </Box>
                 </Modal>
-                <Modal
-                    open={isPatientsModalOpen}
-                    onClose={handleClosePatientsModal}
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    sx={{ overflowY: 'auto' }}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        maxHeight: '80%',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                        overflowY: 'auto',
-                    }}>
-                        <Typography id="modal-title" variant="h6" component="h2">
-                            Total Patients
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Phone</TableCell>
-                                        <TableCell>Address</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {searchResults.length > 0 ? (
-                                        searchResults.map((patient, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{patient.patient_id}</TableCell>
-                                                <TableCell>{patient.patient_name}</TableCell>
-                                                <TableCell>{patient.patient_email}</TableCell>
-                                                <TableCell>{patient.patient_phone}</TableCell>
-                                                <TableCell>{patient.patient_address}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={5} align="center">No patients found</TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </Modal>
-                <Modal
-                    open={isAppointmentsModalOpen}
-                    onClose={handleCloseAppointmentsModal}
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    sx={{ overflowY: 'auto' }}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        maxHeight: '80%',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                        overflowY: 'auto',
-                    }}>
-                        <Typography id="modal-title" variant="h6" component="h2">
-                            Total Appointments
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Patient</TableCell>
-                                        <TableCell>Doctor</TableCell>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Time</TableCell>
-                                        <TableCell>Status</TableCell>
-                                        <TableCell>Price</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {searchResults.length > 0 ? (
-                                        searchResults.map((appointment, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{appointment.appointment_id}</TableCell>
-                                                <TableCell>{appointment.patient && appointment.patient[0] ? appointment.patient[0].patient_name : 'N/A'}</TableCell>
-                                                <TableCell>{appointment.doctor && appointment.doctor[0] ? appointment.doctor[0].doctor_name : 'N/A'}</TableCell>
-                                                <TableCell>{new Date(appointment.medical_day).toLocaleDateString()}</TableCell>
-                                                <TableCell>{convertSlotToTime(appointment.slot)}</TableCell>
-                                                <TableCell>{appointment.status}</TableCell>
-                                                <TableCell>{appointment.price}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={7} align="center">No appointments found</TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </Modal>
-                <Modal
-                    open={isStaffModalOpen}
-                    onClose={handleCloseStaffModal}
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    sx={{ overflowY: 'auto' }}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        maxHeight: '80%',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                        overflowY: 'auto',
-                    }}>
-                        <Typography id="modal-title" variant="h6" component="h2">
-                            Total Staff
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Phone</TableCell>
-                                        <TableCell>Address</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {searchResults.length > 0 ? (
-                                        searchResults.map((staff, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{staff.staff_id}</TableCell>
-                                                <TableCell>{staff.staff_name}</TableCell>
-                                                <TableCell>{staff.staff_email}</TableCell>
-                                                <TableCell>{staff.staff_phone}</TableCell>
-                                                <TableCell>{staff.staff_address}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={5} align="center">No staff found</TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </Modal>
-                {isFeedbackModalOpen && (
-                    <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
-                )}
             </Box>
         </ThemeProvider>
     );
