@@ -21,6 +21,7 @@ const FeedbackListWithReply = ({ onClose }) => {
 
     const handleReply = () => {
         const emailData = {
+            name:selectedFeedback.name,
             email: selectedFeedback.email,
             subject: `Re: ${selectedFeedback.subject}`,
             message: replyContent,
