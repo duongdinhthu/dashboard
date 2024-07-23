@@ -195,7 +195,13 @@ const AdminDashboard = () => {
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <Sidebar onInboxClick={handleOpenFeedbackModal} />
+                <Sidebar
+                    onInboxClick={handleOpenFeedbackModal}
+                    handleOpenDoctorsPage={handleOpenDoctorsPage}
+                    handleOpenPatientsPage={handleOpenPatientsPage}
+                    handleOpenAppointmentsPage={handleOpenAppointmentsPage}
+                    handleOpenStaffPage={handleOpenStaffPage}
+                />
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
                     <Toolbar />
                     <Container>
