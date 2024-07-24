@@ -1,8 +1,7 @@
 // src/components/admins/Sidebar.js
 
 import React from 'react';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { AccountCircle, Group, LocalHospital, Inbox } from '@mui/icons-material';
+import './Sidebar.css'; // Import CSS for Sidebar
 
 const Sidebar = ({
                      onInboxClick,
@@ -12,38 +11,35 @@ const Sidebar = ({
                      handleOpenStaffPage
                  }) => {
     return (
-        <List>
-            <ListItem button onClick={handleOpenDoctorsPage}>
-                <ListItemIcon>
-                    <LocalHospital />
-                </ListItemIcon>
-                <ListItemText primary="Total Doctors" />
-            </ListItem>
-            <ListItem button onClick={handleOpenPatientsPage}>
-                <ListItemIcon>
-                    <Group />
-                </ListItemIcon>
-                <ListItemText primary="Total Patients" />
-            </ListItem>
-            <ListItem button onClick={handleOpenAppointmentsPage}>
-                <ListItemIcon>
-                    <AccountCircle />
-                </ListItemIcon>
-                <ListItemText primary="Total Appointments" />
-            </ListItem>
-            <ListItem button onClick={handleOpenStaffPage}>
-                <ListItemIcon>
-                    <Group />
-                </ListItemIcon>
-                <ListItemText primary="Total Staff" />
-            </ListItem>
-            <ListItem button onClick={onInboxClick}>
-                <ListItemIcon>
-                    <Inbox />
-                </ListItemIcon>
-                <ListItemText primary="Hộp thư đến" />
-            </ListItem>
-        </List>
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <h2>Admin Dashboard</h2>
+            </div>
+            <div className="sidebar-menu">
+                <ul>
+                    <li onClick={handleOpenDoctorsPage}>
+                        <span className="icon">🏥</span>
+                        <span className="text">Total Doctors</span>
+                    </li>
+                    <li onClick={handleOpenPatientsPage}>
+                        <span className="icon">👥</span>
+                        <span className="text">Total Patients</span>
+                    </li>
+                    <li onClick={handleOpenAppointmentsPage}>
+                        <span className="icon">📅</span>
+                        <span className="text">Total Appointments</span>
+                    </li>
+                    <li onClick={handleOpenStaffPage}>
+                        <span className="icon">👥</span>
+                        <span className="text">Total Staff</span>
+                    </li>
+                    <li onClick={onInboxClick}>
+                        <span className="icon">📥</span>
+                        <span className="text">Hộp thư đến</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     );
 };
 

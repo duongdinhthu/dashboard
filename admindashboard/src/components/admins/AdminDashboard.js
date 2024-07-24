@@ -1,57 +1,27 @@
-// src/components/admins/AdminDashboard.js
-
 import React, { useState, useEffect } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell, Card, CardContent,
-    TableBody,
-    Paper,
-    Typography,
-    Grid,
-    Button,
-    Box,
-    AppBar,
-    Toolbar,
-    Container,
-    CssBaseline,
-    Modal,
-} from '@mui/material';
-import { AccountCircle, Group, LocalHospital } from '@mui/icons-material';
 import axios from 'axios';
-import AppointmentsChart from "./AppointmentsChart";
-import StatisticsCard from './StatisticsCard';
-import FeedbackListWithReply from './FeedbackListWithReply';
 import { useNavigate } from 'react-router-dom';
-
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-    },
-});
+import AppointmentsChart from "./AppointmentsChart";
+import FeedbackListWithReply from './FeedbackListWithReply';
+import Sidebar from './Sidebar';
+import './AdminDashboard.css'; // Import the CSS file
 
 const AdminDashboard = () => {
-    const [searchResults, setSearchResults] = useState([]);
-    const [error, setError] = useState('');
-    const [appointments, setAppointments] = useState([]);
-    const [todayAppointments, setTodayAppointments] = useState([]);
-    const [showTodayAppointments, setShowTodayAppointments] = useState(false);
-    const [appointmentsRange, setAppointmentsRange] = useState([]);
-    const [feedbacks, setFeedbacks] = useState([]);
-    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [stats, setStats] = useState({
         doctors: 0,
         patients: 0,
         appointments: 0,
         staff: 0,
     });
+    const [todayAppointments, setTodayAppointments] = useState([]);
+    const [appointmentsRange, setAppointmentsRange] = useState([]);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [showTodayAppointments, setShowTodayAppointments] = useState(false);
+    const [feedbacks, setFeedbacks] = useState([]);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Kiểm tra session
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         const role = localStorage.getItem('role');
 
@@ -60,9 +30,9 @@ const AdminDashboard = () => {
             return;
         }
 
+        fetchStats();
         fetchTodayAppointments();
         fetchAppointmentsRange();
-        fetchStats();
         fetchFeedbacks();
     }, [navigate]);
 
@@ -75,11 +45,6 @@ const AdminDashboard = () => {
                 axios.get('http://localhost:8080/api/v1/staffs/list')
             ]);
 
-            console.log('Doctors Data:', doctorsRes.data);
-            console.log('Patients Data:', patientsRes.data);
-            console.log('Appointments Data:', appointmentsRes.data);
-            console.log('Staff Data:', staffRes.data);
-
             setStats({
                 doctors: doctorsRes.data.length,
                 patients: patientsRes.data.length,
@@ -88,6 +53,7 @@ const AdminDashboard = () => {
             });
         } catch (error) {
             console.error('Error fetching statistics', error);
+            setError('Error fetching statistics');
         }
     };
 
@@ -96,11 +62,10 @@ const AdminDashboard = () => {
             const today = new Date().toISOString().split('T')[0];
             const params = { appointment_date: today };
             const response = await axios.get('http://localhost:8080/api/v1/appointments/search', { params });
-            console.log('Data received from backend:', response.data);
             setTodayAppointments(response.data);
         } catch (error) {
-            console.error('Lỗi khi lấy cuộc hẹn hôm nay', error);
-            setError('Lỗi khi lấy cuộc hẹn hôm nay');
+            console.error('Error fetching today\'s appointments', error);
+            setError('Error fetching today\'s appointments');
         }
     };
 
@@ -120,7 +85,6 @@ const AdminDashboard = () => {
                 return medicalDay >= tenDaysAgo && medicalDay <= threeDaysLater;
             });
 
-            console.log('Filtered Data:', filteredAppointments);
             setAppointmentsRange(filteredAppointments);
         } catch (error) {
             console.error('Error fetching appointments range', error);
@@ -134,6 +98,7 @@ const AdminDashboard = () => {
             setFeedbacks(response.data);
         } catch (error) {
             console.error('Error fetching feedbacks', error);
+            setError('Error fetching feedbacks');
         }
     };
 
@@ -175,163 +140,115 @@ const AdminDashboard = () => {
         navigate('/adminlogin');
     };
 
+    const handleOpenDoctorsPage = () => {
+        navigate('/doctors');
+    };
+
+    const handleOpenPatientsPage = () => {
+        navigate('/patients');
+    };
+
+    const handleOpenAppointmentsPage = () => {
+        navigate('/appointments');
+    };
+
+    const handleOpenStaffPage = () => {
+        navigate('/staff');
+    };
+
     return (
-        <ThemeProvider theme={lightTheme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Toolbar>
-                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                            Admin Dashboard
-                        </Typography>
-                        <Button color="inherit" onClick={handleLogout}>
-                            Logout
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
-                    <Toolbar />
-                    <Container>
-                        {error && <Typography color="error">{error}</Typography>}
+        <div className="admin-dashboard">
+            <Sidebar
+                onInboxClick={handleOpenFeedbackModal}
+                handleOpenDoctorsPage={handleOpenDoctorsPage}
+                handleOpenPatientsPage={handleOpenPatientsPage}
+                handleOpenAppointmentsPage={handleOpenAppointmentsPage}
+                handleOpenStaffPage={handleOpenStaffPage}
+            />
+            <div className="main-content">
+                <div className="topbar">
+                    <div className="search">
+                        <input type="text" placeholder="Search..." />
+                    </div>
+                    <div className="profile">
+                        <img src="profile.jpg" alt="Profile" />
+                        <span>Admin</span>
+                        <button onClick={handleLogout}>Logout</button>
+                    </div>
+                </div>
+                <div className="content">
+                    <h1>Dashboard</h1>
+                    {error && <div className="error">{error}</div>}
 
-                        <Grid container spacing={2} sx={{ mb: 4 }}>
-                            <StatisticsCard
-                                title="Total Doctors"
-                                value={stats.doctors}
-                                increase="5% increase in 30 days"
-                                icon={<LocalHospital />}
-                            />
-                            <StatisticsCard
-                                title="Total Patients"
-                                value={stats.patients}
-                                increase="10% increase in 30 days"
-                                icon={<Group />}
-                            />
-                            <StatisticsCard
-                                title="Total Appointments"
-                                value={stats.appointments}
-                                increase="15% increase in 30 days"
-                                icon={<AccountCircle />}
-                            />
-                            <StatisticsCard
-                                title="Total Staff"
-                                value={stats.staff}
-                                increase="8% increase in 30 days"
-                                icon={<Group />}
-                            />
-                        </Grid>
+                    <div className="stats">
+                        <div className="card" onClick={handleOpenDoctorsPage}>
+                            <h3>{stats.doctors}</h3>
+                            <p>Doctors</p>
+                        </div>
+                        <div className="card" onClick={handleOpenPatientsPage}>
+                            <h3>{stats.patients}</h3>
+                            <p>Patients</p>
+                        </div>
+                        <div className="card" onClick={handleOpenAppointmentsPage}>
+                            <h3>{stats.appointments}</h3>
+                            <p>Appointments</p>
+                        </div>
+                        <div className="card" onClick={handleOpenStaffPage}>
+                            <h3>{stats.staff}</h3>
+                            <p>Staff</p>
+                        </div>
+                    </div>
 
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Box sx={{ width: '50%' }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Appointment Statistics
-                                </Typography>
-                                <AppointmentsChart appointments={appointmentsRange} />
-                            </Box>
-
-                            <Box sx={{ width: '45%' }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Today's Appointments
-                                </Typography>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Button variant="contained" color="primary" onClick={handleShowTodayAppointments} fullWidth>
-                                            {showTodayAppointments ? "Hide Today's Appointments" : "Show Today's Appointments"}
-                                        </Button>
-                                    </Grid>
-                                    {showTodayAppointments && (
-                                        <Grid item xs={12}>
-                                            <TableContainer component={Paper}>
-                                                <Table>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <TableCell>Time</TableCell>
-                                                            <TableCell>Patient</TableCell>
-                                                            <TableCell>Doctor</TableCell>
-                                                            <TableCell>Status</TableCell>
-                                                            <TableCell>Price</TableCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {todayAppointments.length > 0 ? (
-                                                            todayAppointments.map((appointment, index) => (
-                                                                <TableRow key={index}>
-                                                                    <TableCell>{`${convertSlotToTime(appointment.slot)} - ${formatDate(appointment.medical_day)}`}</TableCell>
-                                                                    <TableCell>{appointment.patient[0]?.patient_name || "N/A"}</TableCell>
-                                                                    <TableCell>{appointment.doctor[0]?.doctor_name || "N/A"}</TableCell>
-                                                                    <TableCell>{appointment.status}</TableCell>
-                                                                    <TableCell>{appointment.price}</TableCell>
-                                                                </TableRow>
-                                                            ))
-                                                        ) : (
-                                                            <TableRow>
-                                                                <TableCell colSpan={5} align="center">No appointments today</TableCell>
-                                                            </TableRow>
-                                                        )}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </Grid>
+                    <div className="charts">
+                        <div className="chart">
+                            <h2>Appointment Statistics</h2>
+                            <AppointmentsChart appointments={appointmentsRange} />
+                        </div>
+                        <div className="chart">
+                            <h2>Today's Appointments</h2>
+                            <button onClick={handleShowTodayAppointments}>
+                                {showTodayAppointments ? "Hide Today's Appointments" : "Show Today's Appointments"}
+                            </button>
+                            {showTodayAppointments && (
+                                <table className="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Status</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {todayAppointments.length > 0 ? (
+                                        todayAppointments.map((appointment, index) => (
+                                            <tr key={index}>
+                                                <td>{`${convertSlotToTime(appointment.slot)} - ${formatDate(appointment.medical_day)}`}</td>
+                                                <td>{appointment.patient[0]?.patient_name || "N/A"}</td>
+                                                <td>{appointment.doctor[0]?.doctor_name || "N/A"}</td>
+                                                <td>{appointment.status}</td>
+                                                <td>{appointment.price}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={5} align="center">No appointments today</td>
+                                        </tr>
                                     )}
-                                </Grid>
-                                <Grid container spacing={2} sx={{ mt: 2 }}>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6">
-                                                    Total Appointments
-                                                </Typography>
-                                                <Typography variant="h4">
-                                                    {appointmentsRange.length}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6">
-                                                    Appointments in Next 3 Days
-                                                </Typography>
-                                                <Typography variant="h4">
-                                                    {appointmentsRange.filter(appointment => {
-                                                        const medicalDay = new Date(appointment.medical_day);
-                                                        return medicalDay > new Date();
-                                                    }).length}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </Box>
-                    </Container>
-                </Box>
-                <Modal
-                    open={isFeedbackModalOpen}
-                    onClose={handleCloseFeedbackModal}
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                    sx={{ overflowY: 'auto' }}
-                >
-                    <Box sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        maxHeight: '80%',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                        overflowY: 'auto',
-                    }}>
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
                         <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
-                    </Box>
-                </Modal>
-            </Box>
-        </ThemeProvider>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 
