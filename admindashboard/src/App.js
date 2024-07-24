@@ -12,23 +12,23 @@ import PatientsPage from './components/admins/PatientsPage';
 import AppointmentsPage from './components/admins/AppointmentsPage';
 import StaffPage from './components/admins/StaffPage';
 import DoctorDetailPage from './components/admins/DoctorDetailPage';
-import AdminLayout from './components/admins/AdminLayout';
+import DoctorLayout from './components/doctors/DoctorLayout';
 
 const App = () => {
     return (
         <Router>
             <Routes>
                 <Route path="/adminlogin" element={<LoginAdmin />} />
-                <Route path="/admindashboard" element={<PrivateRoute role="admin"><AdminLayout><AdminDashboard /></AdminLayout></PrivateRoute>} />
+                <Route path="/admindashboard" element={<PrivateRoute role="admin"><AdminDashboard /></PrivateRoute>} />
                 <Route path="/doctorlogin" element={<LoginDoctor />} />
-                <Route path="/doctordashboard" element={<PrivateRoute role="doctor"><DoctorDashboard /></PrivateRoute>} />
+                <Route path="/doctordashboard" element={<PrivateRoute role="doctor"><DoctorLayout><DoctorDashboard /></DoctorLayout></PrivateRoute>} />
                 <Route path="/stafflogin" element={<LoginStaff />} />
                 <Route path="/staffdashboard" element={<PrivateRoute role="staff"><StaffDashboard /></PrivateRoute>} />
-                <Route path="/doctors" element={<PrivateRoute role="admin"><AdminLayout><DoctorsPage /></AdminLayout></PrivateRoute>} />
-                <Route path="/patients" element={<PrivateRoute role="admin"><AdminLayout><PatientsPage /></AdminLayout></PrivateRoute>} />
-                <Route path="/appointments" element={<PrivateRoute role="admin"><AdminLayout><AppointmentsPage /></AdminLayout></PrivateRoute>} />
-                <Route path="/staff" element={<PrivateRoute role="admin"><AdminLayout><StaffPage /></AdminLayout></PrivateRoute>} />
-                <Route path="/doctors/:doctorId" element={<PrivateRoute role="admin"><AdminLayout><DoctorDetailPage /></AdminLayout></PrivateRoute>} />
+                <Route path="/doctors" element={<PrivateRoute role="admin"><DoctorsPage /></PrivateRoute>} />
+                <Route path="/patients" element={<PrivateRoute role="admin"><PatientsPage /></PrivateRoute>} />
+                <Route path="/appointments" element={<PrivateRoute role="admin"><AppointmentsPage /></PrivateRoute>} />
+                <Route path="/staff" element={<PrivateRoute role="admin"><StaffPage /></PrivateRoute>} />
+                <Route path="/doctors/:doctorId" element={<PrivateRoute role="admin"><DoctorDetailPage /></PrivateRoute>} />
             </Routes>
         </Router>
     );

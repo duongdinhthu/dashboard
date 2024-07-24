@@ -1,15 +1,8 @@
+// src/components/doctors/DoctorDashboard.js
+
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { Button, Select, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, Card, CardContent, Grid } from '@mui/material';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, Box, List, ListItem, ListItemText, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Card, CardContent, Grid } from '@mui/material';
 import axios from 'axios';
 
 const lightTheme = createTheme({
