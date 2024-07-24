@@ -1,3 +1,5 @@
+// src/components/admins/AdminDashboard.js
+
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
@@ -21,7 +23,6 @@ import {
 import { AccountCircle, Group, LocalHospital } from '@mui/icons-material';
 import axios from 'axios';
 import AppointmentsChart from "./AppointmentsChart";
-import Sidebar from './Sidebar';
 import StatisticsCard from './StatisticsCard';
 import FeedbackListWithReply from './FeedbackListWithReply';
 import { useNavigate } from 'react-router-dom';
@@ -50,11 +51,20 @@ const AdminDashboard = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Kiểm tra session
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const role = localStorage.getItem('role');
+
+        if (!isLoggedIn || role !== 'admin') {
+            navigate('/adminlogin');
+            return;
+        }
+
         fetchTodayAppointments();
         fetchAppointmentsRange();
         fetchStats();
         fetchFeedbacks();
-    }, []);
+    }, [navigate]);
 
     const fetchStats = async () => {
         try {
@@ -165,22 +175,6 @@ const AdminDashboard = () => {
         navigate('/adminlogin');
     };
 
-    const handleOpenDoctorsPage = () => {
-        navigate('/doctors');
-    };
-
-    const handleOpenPatientsPage = () => {
-        navigate('/patients');
-    };
-
-    const handleOpenAppointmentsPage = () => {
-        navigate('/appointments');
-    };
-
-    const handleOpenStaffPage = () => {
-        navigate('/staff');
-    };
-
     return (
         <ThemeProvider theme={lightTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -195,13 +189,6 @@ const AdminDashboard = () => {
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <Sidebar
-                    onInboxClick={handleOpenFeedbackModal}
-                    handleOpenDoctorsPage={handleOpenDoctorsPage}
-                    handleOpenPatientsPage={handleOpenPatientsPage}
-                    handleOpenAppointmentsPage={handleOpenAppointmentsPage}
-                    handleOpenStaffPage={handleOpenStaffPage}
-                />
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
                     <Toolbar />
                     <Container>
@@ -213,28 +200,24 @@ const AdminDashboard = () => {
                                 value={stats.doctors}
                                 increase="5% increase in 30 days"
                                 icon={<LocalHospital />}
-                                onClick={handleOpenDoctorsPage}
                             />
                             <StatisticsCard
                                 title="Total Patients"
                                 value={stats.patients}
                                 increase="10% increase in 30 days"
                                 icon={<Group />}
-                                onClick={handleOpenPatientsPage}
                             />
                             <StatisticsCard
                                 title="Total Appointments"
                                 value={stats.appointments}
                                 increase="15% increase in 30 days"
                                 icon={<AccountCircle />}
-                                onClick={handleOpenAppointmentsPage}
                             />
                             <StatisticsCard
                                 title="Total Staff"
                                 value={stats.staff}
                                 increase="8% increase in 30 days"
                                 icon={<Group />}
-                                onClick={handleOpenStaffPage}
                             />
                         </Grid>
 
