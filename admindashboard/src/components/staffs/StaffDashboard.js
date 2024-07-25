@@ -1,16 +1,13 @@
+// src/components/staffs/StaffDashboard.js
+
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import { IconButton, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, Box, Button, IconButton, MenuItem, Select, FormControl, InputLabel, Card, CardContent, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import EditAppointmentModal from "./EditAppointmentModal";
 import { useNavigate } from 'react-router-dom';
+import './StaffDashboard.css'; // Import file CSS
 
 const lightTheme = createTheme({
     palette: {
@@ -23,6 +20,9 @@ const StaffDashboard = () => {
     const [statusFilter, setStatusFilter] = useState('Pending');
     const [error, setError] = useState('');
     const [editItem, setEditItem] = useState(null);
+    const [showPendingAppointments, setShowPendingAppointments] = useState(true);
+    const [showConfirmedAppointments, setShowConfirmedAppointments] = useState(false);
+    const [showCompletedAppointments, setShowCompletedAppointments] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -108,11 +108,32 @@ const StaffDashboard = () => {
         navigate('/stafflogin');
     };
 
+    const handleShowPendingAppointments = () => {
+        setShowPendingAppointments(true);
+        setShowConfirmedAppointments(false);
+        setShowCompletedAppointments(false);
+        fetchAppointments('Pending');
+    };
+
+    const handleShowConfirmedAppointments = () => {
+        setShowPendingAppointments(false);
+        setShowConfirmedAppointments(true);
+        setShowCompletedAppointments(false);
+        fetchAppointments('Confirmed');
+    };
+
+    const handleShowCompletedAppointments = () => {
+        setShowPendingAppointments(false);
+        setShowConfirmedAppointments(false);
+        setShowCompletedAppointments(true);
+        fetchAppointments('Completed');
+    };
+
     return (
         <ThemeProvider theme={lightTheme}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppBar position="fixed">
+                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                     <Toolbar>
                         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                             Staff Dashboard
@@ -122,7 +143,8 @@ const StaffDashboard = () => {
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 8 }}>
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
+                    <Toolbar />
                     <Container>
                         {error && <Typography color="error">{error}</Typography>}
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -146,39 +168,61 @@ const StaffDashboard = () => {
                         <Typography variant="h6" gutterBottom>
                             Appointment Data
                         </Typography>
-                        <div>
+                        <Grid container spacing={2}>
                             {searchResults.map((appointment) => (
-                                <div key={appointment.appointment_id} style={{ border: '1px solid #ccc', padding: '16px', marginBottom: '16px' }}>
-                                    <p><strong>Patient Name:</strong> {appointment.patient_name}</p>
-                                    <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                                    <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
-                                    <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                                    <p><strong>Slot:</strong> {appointment.slot}</p>
-                                    <p><strong>Status:</strong> {appointment.status}</p>
-                                    <p><strong>Payment Name:</strong> {appointment.payment_name}</p>
-                                    <p><strong>Price:</strong> {appointment.price}</p>
-                                    <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
-                                    {appointment.status === 'Pending' && (
-                                        <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')} variant="contained" color="primary" style={{ marginRight: '8px' }}>
-                                            Confirm
-                                        </Button>
-                                    )}
-                                    {appointment.status === 'Confirmed' && (
-                                        <>
-                                            <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')} variant="contained" color="success" style={{ marginRight: '8px' }}>
-                                                Complete
+                                <Grid item xs={12} md={6} lg={4} key={appointment.appointment_id}>
+                                    <Card>
+                                        <CardContent>
+                                            <Typography variant="h6" gutterBottom>
+                                                {appointment.patient_name}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Doctor Name:</strong> {appointment.doctor_name}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Slot:</strong> {appointment.slot}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Status:</strong> {appointment.status}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Payment Name:</strong> {appointment.payment_name}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Price:</strong> {appointment.price}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}
+                                            </Typography>
+                                            {appointment.status === 'Pending' && (
+                                                <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')} variant="contained" color="primary" style={{ marginTop: '8px', marginRight: '8px' }}>
+                                                    Confirm
+                                                </Button>
+                                            )}
+                                            {appointment.status === 'Confirmed' && (
+                                                <>
+                                                    <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')} variant="contained" color="success" style={{ marginTop: '8px', marginRight: '8px' }}>
+                                                        Complete
+                                                    </Button>
+                                                    <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')} variant="contained" color="secondary" style={{ marginTop: '8px', marginRight: '8px' }}>
+                                                        Cancel
+                                                    </Button>
+                                                </>
+                                            )}
+                                            <Button onClick={() => handleEditClick(appointment)} variant="outlined" style={{ marginTop: '8px', marginRight: '8px' }}>
+                                                Edit
                                             </Button>
-                                            <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')} variant="contained" color="secondary" style={{ marginRight: '8px' }}>
-                                                Cancel
-                                            </Button>
-                                        </>
-                                    )}
-                                    <Button onClick={() => handleEditClick(appointment)} variant="outlined" style={{ marginRight: '8px' }}>
-                                        Edit
-                                    </Button>
-                                </div>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
                             ))}
-                        </div>
+                        </Grid>
                     </Container>
                 </Box>
                 {editItem && (

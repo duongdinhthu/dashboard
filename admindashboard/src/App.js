@@ -13,6 +13,7 @@ import AppointmentsPage from './components/admins/AppointmentsPage';
 import StaffPage from './components/admins/StaffPage';
 import DoctorDetailPage from './components/admins/DoctorDetailPage';
 import DoctorLayout from './components/doctors/DoctorLayout';
+import StaffLayout from './components/staffs/StaffLayout';
 
 const App = () => {
     return (
@@ -23,7 +24,7 @@ const App = () => {
                 <Route path="/doctorlogin" element={<LoginDoctor />} />
                 <Route path="/doctordashboard" element={<PrivateRoute role="doctor"><DoctorLayout><DoctorDashboard /></DoctorLayout></PrivateRoute>} />
                 <Route path="/stafflogin" element={<LoginStaff />} />
-                <Route path="/staffdashboard" element={<PrivateRoute role="staff"><StaffDashboard /></PrivateRoute>} />
+                <Route path="/staffdashboard" element={<PrivateRoute role="staff"><StaffLayout><StaffDashboard /></StaffLayout></PrivateRoute>} />
                 <Route path="/doctors" element={<PrivateRoute role="admin"><DoctorsPage /></PrivateRoute>} />
                 <Route path="/patients" element={<PrivateRoute role="admin"><PatientsPage /></PrivateRoute>} />
                 <Route path="/appointments" element={<PrivateRoute role="admin"><AppointmentsPage /></PrivateRoute>} />

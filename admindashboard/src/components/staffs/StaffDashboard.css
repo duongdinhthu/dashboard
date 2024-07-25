@@ -1,0 +1,16 @@
+/* src/components/staffs/StaffDashboard.css */
+
+.appointment-card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.appointment-card p {
+    margin: 8px 0;
+}
+
+.appointment-card button {
+    margin-top: 8px;
+    margin-right: 8px;
+}
