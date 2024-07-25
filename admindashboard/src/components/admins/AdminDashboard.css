@@ -8,7 +8,7 @@
 
 .sidebar-header {
     padding: 20px;
-    background-color: #1976d2;
+    background-color: #004B91;
     text-align: center;
 }
 
@@ -28,11 +28,6 @@
 
 .sidebar-menu ul li .icon {
     margin-right: 10px;
-}
-
-.sidebar-menu ul li:hover {
-    background-color: #fff;
-    color: #1565c0;
 }
 
 .main-content {
@@ -63,13 +58,6 @@
     gap: 30px;
 }
 
-.topbar .profile img {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-}
-
 .content {
     padding: 20px;
     background-color: #fff;
@@ -84,7 +72,7 @@
 }
 
 .card {
-    background-color: #007bff;
+    background-color: #004B91;
     color: white;
     padding: 20px;
     border-radius: 4px;
@@ -125,6 +113,7 @@
 .table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
 .table th, .table td {
@@ -178,9 +167,9 @@ body, html {
 
 .sidebar {
     width: 250px; /* Sidebar width */
-    background-color: #1976d2;
+    background-color: #004B91;
     color: white;
-    height: 100%; /* Full height */
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -194,4 +183,54 @@ body, html {
 .content {
     height: calc(100vh - 50px); /* Adjust height accounting for topbar */
     overflow-y: auto; /* Enable vertical scrolling within content area */
+}
+
+.profile button{
+    background-color: #004B91;
+    color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    gap: 5px;
+    border-radius: 4px;
+}
+
+.profile button:hover{
+    background-color: #0056a6;
+}
+
+.chart h2{
+    font-size: 24px;
+    font-weight: bold;
+    color: #004B91;
+}
+
+.chart button {
+    background-color: #004B91;
+    color: #ffffff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+}
+.chart button:hover{
+    background-color: #0056a6;
+}
+
+.content h1{
+    font-size: 30px;
+    font-weight: bold;
+    color: #0056a6;
+}
+
+h2{
+    color: #004B91;
+    font-weight: bold;
+    font-size: 24px;
 }

@@ -34,5 +34,10 @@
 }
 
 .sidebar-menu ul li:hover {
-    background-color: #495057;
+    background-color: #0056a6;
+}
+
+.sidebar-header h2{
+    color: #ffffff;
+    font-size: 22px;
 }

@@ -77,8 +77,8 @@ const DoctorsPage = () => {
             />
             <div className="content-container">
                 <div className="header-container">
-                    <h4>Departments and Doctors</h4>
-                    <button onClick={handleBack} className="back-button">Back to Admin Dashboard</button>
+                    <h2>Departments & Doctors</h2>
+                    {/*<button onClick={handleBack} className="back-button">Back to Admin Dashboard</button>*/}
                 </div>
                 <div className="grid-container">
                     {departments.map(department => (
@@ -87,7 +87,7 @@ const DoctorsPage = () => {
                                 <div className="accordion">
                                     <div className="accordion-summary" onClick={() => handleAccordionToggle(department.department_id)}>
                                         <h6>{department.department_name}</h6>
-                                        <span>{expanded === department.department_id ? '-' : '+'}</span>
+                                        <span><img width="30" height="30" src="https://img.icons8.com/ios/50/004b91/view-file.png" alt="view-file"/></span>
                                     </div>
                                     {expanded === department.department_id && (
                                         <div className="accordion-details-overlay">

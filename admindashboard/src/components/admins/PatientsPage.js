@@ -61,10 +61,10 @@ const PatientsPage = () => {
             />
             <div className="content">
                 <div className="header">
-                    <h4>Total Patients</h4>
-                    <button className="back-button" onClick={handleBack}>
-                        Back to Admin Dashboard
-                    </button>
+                    <h2>Patients List</h2>
+                    {/*<button className="back-button" onClick={handleBack}>*/}
+                    {/*    Back to Admin Dashboard*/}
+                    {/*</button>*/}
                 </div>
                 <div className="table-container">
                     <table>

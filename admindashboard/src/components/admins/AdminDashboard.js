@@ -168,17 +168,19 @@ const AdminDashboard = () => {
             <div className="main-content">
                 <div className="topbar">
                     <div className="search">
-                        <input type="text" placeholder="Search..." />
+                        {/*<input type="text" placeholder="Search..." />*/}
                     </div>
                     <div className="profile">
-                        <img src="profile.jpg" alt="Profile" />
+                        {/*<img src="profile.jpg" alt="Profile" />*/}
                         <span>Admin</span>
-                        <button onClick={handleLogout}>Logout</button>
+                        <button onClick={handleLogout}>Logout <img width="20" height="20"
+                                                                   src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
+                                                                   alt="exit--v1"/></button>
                     </div>
                 </div>
                 <div className="content">
-                    <h1>Dashboard</h1>
-                    {error && <div className="error">{error}</div>}
+                <h2>Dashboard</h2>
+                    {/*{error && <div className="error">{error}</div>}*/}
 
                     <div className="stats">
                         <div className="card" onClick={handleOpenDoctorsPage}>

@@ -60,7 +60,7 @@ const FeedbackListWithReply = ({ onClose }) => {
                 overflowY: 'auto'
             }}>
                 <Typography variant="h6" gutterBottom>
-                    Hộp thư đến
+                    Feedbacks
                 </Typography>
                 {error && <Typography color="error">{error}</Typography>}
                 <List>
@@ -75,9 +75,9 @@ const FeedbackListWithReply = ({ onClose }) => {
                 </List>
                 {selectedFeedback && (
                     <Box sx={{ mt: 4 }}>
-                        <Typography variant="h6">Trả lời: {selectedFeedback.email}</Typography>
+                        <Typography variant="h6">Reply: {selectedFeedback.email}</Typography>
                         <TextField
-                            label="Nội dung trả lời"
+                            label="Message"
                             multiline
                             rows={4}
                             value={replyContent}
@@ -87,7 +87,7 @@ const FeedbackListWithReply = ({ onClose }) => {
                         />
                         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                             <Button onClick={handleReply} variant="contained" color="primary">
-                                Gửi
+                                Send
                             </Button>
                         </Box>
                     </Box>
