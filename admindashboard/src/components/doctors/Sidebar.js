@@ -1,31 +1,24 @@
 // src/components/doctors/Sidebar.js
 
 import React from 'react';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { CalendarToday, CalendarMonth, MedicalServices } from '@mui/icons-material';
+import './Sidebar.css';
 
 const Sidebar = ({ onShowTodayAppointments, onShowMonthAppointments, onShowMedicalRecords }) => {
     return (
-        <List>
-            <ListItem button onClick={onShowTodayAppointments}>
-                <ListItemIcon>
-                    <CalendarToday />
-                </ListItemIcon>
-                <ListItemText primary="Lịch khám hôm nay" />
-            </ListItem>
-            <ListItem button onClick={onShowMonthAppointments}>
-                <ListItemIcon>
-                    <CalendarMonth />
-                </ListItemIcon>
-                <ListItemText primary="Lịch khám trong tháng" />
-            </ListItem>
-            <ListItem button onClick={onShowMedicalRecords}>
-                <ListItemIcon>
-                    <MedicalServices />
-                </ListItemIcon>
-                <ListItemText primary="Bệnh án" />
-            </ListItem>
-        </List>
+        <div className="sidebar">
+            <div className="sidebar-item" onClick={onShowTodayAppointments}>
+                <span className="sidebar-icon">📅</span>
+                <span className="sidebar-text">Lịch khám hôm nay</span>
+            </div>
+            <div className="sidebar-item" onClick={onShowMonthAppointments}>
+                <span className="sidebar-icon">🗓️</span>
+                <span className="sidebar-text">Lịch khám trong tháng</span>
+            </div>
+            <div className="sidebar-item" onClick={onShowMedicalRecords}>
+                <span className="sidebar-icon">🩺</span>
+                <span className="sidebar-text">Bệnh án</span>
+            </div>
+        </div>
     );
 };
 
