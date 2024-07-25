@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Typography, Box, Card, CardContent, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
+import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
+import './DoctorDetailPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
 
 const DoctorDetailPage = () => {
     const { doctorId } = useParams();
     const [doctor, setDoctor] = useState(null);
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [monthlyAppointments, setMonthlyAppointments] = useState([]);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,7 +34,7 @@ const DoctorDetailPage = () => {
                 });
                 setTodayAppointments(response.data);
             } catch (error) {
-                console.error('Error fetching today\'s appointments', error);
+                console.error("Error fetching today's appointments", error);
             }
         };
 
@@ -61,6 +64,14 @@ const DoctorDetailPage = () => {
         navigate('/doctors');
     };
 
+    const handleOpenFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const handleCloseFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
+    };
+
     const getTimeFromSlot = (slot) => {
         const slotToTime = {
             1: "08:00 - 09:00",
@@ -76,87 +87,85 @@ const DoctorDetailPage = () => {
     };
 
     return (
-        <Box sx={{ padding: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <Typography variant="h4" gutterBottom>
-                    Doctor Details
-                </Typography>
-                <Button variant="contained" color="primary" onClick={handleBack}>
-                    Back to Doctors Page
-                </Button>
-            </Box>
-            {doctor && (
-                <Box sx={{ marginBottom: 4 }}>
-                    <Typography variant="h5">{doctor.doctor_name}</Typography>
-                    <Typography variant="body1">Email: {doctor.doctor_email}</Typography>
-                    <Typography variant="body1">Phone: {doctor.doctor_phone}</Typography>
-                    <Typography variant="body1">Address: {doctor.doctor_address}</Typography>
-                    <Typography variant="body1">Working Status: {doctor.working_status}</Typography>
-                </Box>
-            )}
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                Today's Appointments
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Time</TableCell>
-                                            <TableCell>Patient</TableCell>
-                                            <TableCell>Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {todayAppointments.map(appointment => (
-                                            <TableRow key={appointment.appointment_id}>
-                                                <TableCell>{getTimeFromSlot(appointment.slot)}</TableCell>
-                                                <TableCell>{appointment.patient?.[0]?.patient_name || 'N/A'}</TableCell>
-                                                <TableCell>{appointment.status}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                Monthly Appointments
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Date</TableCell>
-                                            <TableCell>Time</TableCell>
-                                            <TableCell>Patient</TableCell>
-                                            <TableCell>Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {monthlyAppointments.map(appointment => (
-                                            <TableRow key={appointment.appointment_id}>
-                                                <TableCell>{new Date(appointment.medical_day).toLocaleDateString()}</TableCell>
-                                                <TableCell>{getTimeFromSlot(appointment.slot)}</TableCell>
-                                                <TableCell>{appointment.patient?.[0]?.patient_name || 'N/A'}</TableCell>
-                                                <TableCell>{appointment.status}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
-        </Box>
+        <div className="doctor-detail-page">
+            <Sidebar
+                onInboxClick={handleOpenFeedbackModal}
+                handleOpenDoctorsPage={() => navigate('/doctors')}
+                handleOpenPatientsPage={() => navigate('/patients')}
+                handleOpenAppointmentsPage={() => navigate('/appointments')}
+                handleOpenStaffPage={() => navigate('/staff')}
+            />
+            <div className="content">
+                <div className="header">
+                    <h4>Doctor Details</h4>
+                    <button className="back-button" onClick={handleBack}>Back to Doctors Page</button>
+                </div>
+                {doctor && (
+                    <div className="doctor-info">
+                        <h5>{doctor.doctor_name}</h5>
+                        <p>Email: {doctor.doctor_email}</p>
+                        <p>Phone: {doctor.doctor_phone}</p>
+                        <p>Address: {doctor.doctor_address}</p>
+                        <p>Working Status: {doctor.working_status}</p>
+                    </div>
+                )}
+                <div className="appointments-container">
+                    <div className="appointments-card">
+                        <h6>Today's Appointments</h6>
+                        <div className="table-container">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {todayAppointments.map(appointment => (
+                                    <tr key={appointment.appointment_id}>
+                                        <td>{getTimeFromSlot(appointment.slot)}</td>
+                                        <td>{appointment.patient?.[0]?.patient_name || 'N/A'}</td>
+                                        <td>{appointment.status}</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div className="appointments-card">
+                        <h6>Monthly Appointments</h6>
+                        <div className="table-container">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {monthlyAppointments.map(appointment => (
+                                    <tr key={appointment.appointment_id}>
+                                        <td>{new Date(appointment.medical_day).toLocaleDateString()}</td>
+                                        <td>{getTimeFromSlot(appointment.slot)}</td>
+                                        <td>{appointment.patient?.[0]?.patient_name || 'N/A'}</td>
+                                        <td>{appointment.status}</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

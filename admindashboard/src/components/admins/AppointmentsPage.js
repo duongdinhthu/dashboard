@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
+import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
+import './AppointmentsPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
 
 const AppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,49 +41,87 @@ const AppointmentsPage = () => {
         navigate('/admindashboard');
     };
 
+    const handleOpenFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const handleCloseFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
+    };
+
+    const handleOpenDoctorsPage = () => {
+        navigate('/doctors');
+    };
+
+    const handleOpenPatientsPage = () => {
+        navigate('/patients');
+    };
+
+    const handleOpenAppointmentsPage = () => {
+        navigate('/appointments');
+    };
+
+    const handleOpenStaffPage = () => {
+        navigate('/staff');
+    };
+
     return (
-        <Box sx={{ padding: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Total Appointments
-            </Typography>
-            <Button variant="contained" color="primary" onClick={handleBack} sx={{ mb: 2 }}>
-                Back to Admin Dashboard
-            </Button>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Patient</TableCell>
-                            <TableCell>Doctor</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Price</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
+        <div className="appointments-page">
+            <Sidebar
+                onInboxClick={handleOpenFeedbackModal}
+                handleOpenDoctorsPage={handleOpenDoctorsPage}
+                handleOpenPatientsPage={handleOpenPatientsPage}
+                handleOpenAppointmentsPage={handleOpenAppointmentsPage}
+                handleOpenStaffPage={handleOpenStaffPage}
+            />
+            <div className="content">
+                <div className="header">
+                    <h4>Total Appointments</h4>
+                    <button className="back-button" onClick={handleBack}>
+                        Back to Admin Dashboard
+                    </button>
+                </div>
+                <div className="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         {appointments.length > 0 ? (
                             appointments.map((appointment, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{appointment.appointment_id}</TableCell>
-                                    <TableCell>{appointment.patient && appointment.patient[0] ? appointment.patient[0].patient_name : 'N/A'}</TableCell>
-                                    <TableCell>{appointment.doctor && appointment.doctor[0] ? appointment.doctor[0].doctor_name : 'N/A'}</TableCell>
-                                    <TableCell>{new Date(appointment.medical_day).toLocaleDateString()}</TableCell>
-                                    <TableCell>{convertSlotToTime(appointment.slot)}</TableCell>
-                                    <TableCell>{appointment.status}</TableCell>
-                                    <TableCell>{appointment.price}</TableCell>
-                                </TableRow>
+                                <tr key={index}>
+                                    <td>{appointment.appointment_id}</td>
+                                    <td>{appointment.patient && appointment.patient[0] ? appointment.patient[0].patient_name : 'N/A'}</td>
+                                    <td>{appointment.doctor && appointment.doctor[0] ? appointment.doctor[0].doctor_name : 'N/A'}</td>
+                                    <td>{new Date(appointment.medical_day).toLocaleDateString()}</td>
+                                    <td>{convertSlotToTime(appointment.slot)}</td>
+                                    <td>{appointment.status}</td>
+                                    <td>{appointment.price}</td>
+                                </tr>
                             ))
                         ) : (
-                            <TableRow>
-                                <TableCell colSpan={7} align="center">No appointments found</TableCell>
-                            </TableRow>
+                            <tr>
+                                <td colSpan={7} align="center">No appointments found</td>
+                            </tr>
                         )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+                        </tbody>
+                    </table>
+                </div>
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

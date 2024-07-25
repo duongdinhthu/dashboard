@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Button, Card, CardContent, Grid } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
+import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
+import './DoctorsPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
 
 const DoctorsPage = () => {
     const [departments, setDepartments] = useState([]);
     const [doctors, setDoctors] = useState([]);
+    const [expanded, setExpanded] = useState(null);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,60 +37,103 @@ const DoctorsPage = () => {
         navigate(`/doctors/${doctorId}`);
     };
 
+    const handleOpenFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const handleCloseFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
+    };
+
+    const handleOpenDoctorsPage = () => {
+        navigate('/doctors');
+    };
+
+    const handleOpenPatientsPage = () => {
+        navigate('/patients');
+    };
+
+    const handleOpenAppointmentsPage = () => {
+        navigate('/appointments');
+    };
+
+    const handleOpenStaffPage = () => {
+        navigate('/staff');
+    };
+
+    const handleAccordionToggle = (departmentId) => {
+        setExpanded(expanded === departmentId ? null : departmentId);
+    };
+
     return (
-        <Box sx={{ padding: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                <Typography variant="h4" gutterBottom>
-                    Departments and Doctors
-                </Typography>
-                <Button variant="contained" color="primary" onClick={handleBack}>
-                    Back to Admin Dashboard
-                </Button>
-            </Box>
-            <Grid container spacing={2}>
-                {departments.map(department => (
-                    <Grid item xs={12} md={6} lg={4} key={department.department_id}>
-                        <Card>
-                            <CardContent>
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        <Typography variant="h6">{department.department_name}</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <TableContainer component={Paper}>
-                                            <Table>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>ID</TableCell>
-                                                        <TableCell>Name</TableCell>
-                                                        <TableCell>Email</TableCell>
-                                                        <TableCell>Phone</TableCell>
-                                                        <TableCell>Address</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {doctors
-                                                        .filter(doctor => doctor.department_id === department.department_id)
-                                                        .map(doctor => (
-                                                            <TableRow key={doctor.doctor_id} onClick={() => handleDoctorClick(doctor.doctor_id)} style={{ cursor: 'pointer' }}>
-                                                                <TableCell>{doctor.doctor_id}</TableCell>
-                                                                <TableCell>{doctor.doctor_name}</TableCell>
-                                                                <TableCell>{doctor.doctor_email}</TableCell>
-                                                                <TableCell>{doctor.doctor_phone}</TableCell>
-                                                                <TableCell>{doctor.doctor_address}</TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
+        <div className="doctors-page-container">
+            <Sidebar
+                onInboxClick={handleOpenFeedbackModal}
+                handleOpenDoctorsPage={handleOpenDoctorsPage}
+                handleOpenPatientsPage={handleOpenPatientsPage}
+                handleOpenAppointmentsPage={handleOpenAppointmentsPage}
+                handleOpenStaffPage={handleOpenStaffPage}
+                className="sidebar"
+            />
+            <div className="content-container">
+                <div className="header-container">
+                    <h4>Departments and Doctors</h4>
+                    <button onClick={handleBack} className="back-button">Back to Admin Dashboard</button>
+                </div>
+                <div className="grid-container">
+                    {departments.map(department => (
+                        <div className="grid-item" key={department.department_id}>
+                            <div className="department-card">
+                                <div className="accordion">
+                                    <div className="accordion-summary" onClick={() => handleAccordionToggle(department.department_id)}>
+                                        <h6>{department.department_name}</h6>
+                                        <span>{expanded === department.department_id ? '-' : '+'}</span>
+                                    </div>
+                                    {expanded === department.department_id && (
+                                        <div className="accordion-details-overlay">
+                                            <div className="overlay-content">
+                                                <button className="close-button" onClick={() => handleAccordionToggle(null)}>X</button>
+                                                <div className="table-container">
+                                                    <table>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Name</th>
+                                                            <th>Email</th>
+                                                            <th>Phone</th>
+                                                            <th>Address</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {doctors
+                                                            .filter(doctor => doctor.department_id === department.department_id)
+                                                            .map(doctor => (
+                                                                <tr key={doctor.doctor_id} onClick={() => handleDoctorClick(doctor.doctor_id)} className="doctor-row" style={{ cursor: 'pointer' }}>
+                                                                    <td>{doctor.doctor_id}</td>
+                                                                    <td>{doctor.doctor_name}</td>
+                                                                    <td>{doctor.doctor_email}</td>
+                                                                    <td>{doctor.doctor_phone}</td>
+                                                                    <td>{doctor.doctor_address}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

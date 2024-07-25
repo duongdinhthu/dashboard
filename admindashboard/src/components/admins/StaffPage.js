@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
+import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
+import './StaffPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
 
 const StaffPage = () => {
     const [staff, setStaff] = useState([]);
+    const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,45 +26,83 @@ const StaffPage = () => {
         navigate('/admindashboard');
     };
 
+    const handleOpenFeedbackModal = () => {
+        setIsFeedbackModalOpen(true);
+    };
+
+    const handleCloseFeedbackModal = () => {
+        setIsFeedbackModalOpen(false);
+    };
+
+    const handleOpenDoctorsPage = () => {
+        navigate('/doctors');
+    };
+
+    const handleOpenPatientsPage = () => {
+        navigate('/patients');
+    };
+
+    const handleOpenAppointmentsPage = () => {
+        navigate('/appointments');
+    };
+
+    const handleOpenStaffPage = () => {
+        navigate('/staff');
+    };
+
     return (
-        <Box sx={{ padding: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Total Staff
-            </Typography>
-            <Button variant="contained" color="primary" onClick={handleBack} sx={{ mb: 2 }}>
-                Back to Admin Dashboard
-            </Button>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Phone</TableCell>
-                            <TableCell>Address</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
+        <div className="staff-page">
+            <Sidebar
+                onInboxClick={handleOpenFeedbackModal}
+                handleOpenDoctorsPage={handleOpenDoctorsPage}
+                handleOpenPatientsPage={handleOpenPatientsPage}
+                handleOpenAppointmentsPage={handleOpenAppointmentsPage}
+                handleOpenStaffPage={handleOpenStaffPage}
+            />
+            <div className="content">
+                <div className="header">
+                    <h4>Total Staff</h4>
+                    <button className="back-button" onClick={handleBack}>
+                        Back to Admin Dashboard
+                    </button>
+                </div>
+                <div className="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         {staff.length > 0 ? (
                             staff.map((staffMember, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{staffMember.staff_id}</TableCell>
-                                    <TableCell>{staffMember.staff_name}</TableCell>
-                                    <TableCell>{staffMember.staff_email}</TableCell>
-                                    <TableCell>{staffMember.staff_phone}</TableCell>
-                                    <TableCell>{staffMember.staff_address}</TableCell>
-                                </TableRow>
+                                <tr key={index}>
+                                    <td>{staffMember.staff_id}</td>
+                                    <td>{staffMember.staff_name}</td>
+                                    <td>{staffMember.staff_email}</td>
+                                    <td>{staffMember.staff_phone}</td>
+                                    <td>{staffMember.staff_address}</td>
+                                </tr>
                             ))
                         ) : (
-                            <TableRow>
-                                <TableCell colSpan={5} align="center">No staff found</TableCell>
-                            </TableRow>
+                            <tr>
+                                <td colSpan={5} align="center">No staff found</td>
+                            </tr>
                         )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+                        </tbody>
+                    </table>
+                </div>
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 
