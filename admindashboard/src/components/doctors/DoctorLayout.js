@@ -9,27 +9,35 @@ const DoctorLayout = ({ children, onShowTodayAppointments, onShowMonthAppointmen
     const handleLogout = () => {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('role');
-        localStorage.removeItem('doctor_id');
+        localStorage.removeItem('doctorId');
         navigate('/doctorlogin');
     };
 
     return (
         <div className="doctor-layout">
-            <header className="app-bar">
-                <div className="toolbar">
+            <header className="app-bar-doctor">
+                <div className="toolbar-doctor">
                     <h1 className="app-bar-title">Doctor Dashboard</h1>
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogout}>
+                        Logout
+                        <img
+                            width="20"
+                            height="20"
+                            src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
+                            alt="exit--v1"
+                        />
+                    </button>
                 </div>
             </header>
-            <div className="main-content">
+            <div className="main-content-doctor">
                 <Sidebar
                     onShowTodayAppointments={onShowTodayAppointments}
                     onShowMonthAppointments={onShowMonthAppointments}
                     onShowMedicalRecords={onShowMedicalRecords}
                 />
-                <main className="content">
+                <div className="content-doctor-layout">
                     {children}
-                </main>
+                </div>
             </div>
         </div>
     );

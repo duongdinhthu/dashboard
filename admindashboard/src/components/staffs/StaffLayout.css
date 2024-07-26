@@ -47,9 +47,6 @@
     margin-right: 30px;
 }
 
-.logout-button:hover {
-    background-color: #d32f2f;
-}
 
 .staff-ctm {
     display: flex;

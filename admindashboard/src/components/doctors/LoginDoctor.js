@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './LoginDoctor.css'; // Import CSS file
 
 const LoginDoctor = () => {
     const [username, setUsername] = useState('');
@@ -32,10 +33,10 @@ const LoginDoctor = () => {
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h2>Đăng nhập Bác sĩ</h2>
-            <form onSubmit={handleLogin}>
-                <div>
+            <form onSubmit={handleLogin} className="login-form">
+                <div className="form-group">
                     <label>Tên đăng nhập:</label>
                     <input
                         type="text"
@@ -44,7 +45,7 @@ const LoginDoctor = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="form-group">
                     <label>Mật khẩu:</label>
                     <input
                         type="password"
@@ -53,8 +54,8 @@ const LoginDoctor = () => {
                         required
                     />
                 </div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Đăng nhập</button>
+                {error && <p className="error-message">{error}</p>}
+                <button type="submit" className="login-button">Đăng nhập</button>
             </form>
         </div>
     );
