@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './LoginStaff.css'; // Import file CSS
+import './LoginStaff.css';
 
 const LoginStaff = () => {
     const [username, setUsername] = useState('');
@@ -16,8 +16,8 @@ const LoginStaff = () => {
             if (response.status === 200 && response.data.staff_type === 'staff') {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('role', 'staff');
-                localStorage.setItem('staffId', response.data.staff_id); // Lưu staff_id vào localStorage
-                navigate('/staffdashboard'); // Chuyển hướng đến staff dashboard sau khi đăng nhập thành công
+                localStorage.setItem('staffId', response.data.staff_id);
+                navigate('/staffdashboard');
             } else {
                 setError('Bạn không có quyền truy cập.');
             }

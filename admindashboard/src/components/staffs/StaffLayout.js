@@ -1,16 +1,7 @@
-// src/components/staffs/StaffLayout.js
-
 import React from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, AppBar, Toolbar, Typography, Button, CssBaseline } from '@mui/material';
-import Sidebar from './Sidebar';
 import { useNavigate } from 'react-router-dom';
-
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-    },
-});
+import Sidebar from './Sidebar';
+import './StaffLayout.css';
 
 const StaffLayout = ({ children }) => {
     const navigate = useNavigate();
@@ -23,26 +14,28 @@ const StaffLayout = ({ children }) => {
     };
 
     return (
-        <ThemeProvider theme={lightTheme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Toolbar>
-                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                            Staff Dashboard
-                        </Typography>
-                        <Button color="inherit" onClick={handleLogout}>
-                            Logout
-                        </Button>
-                    </Toolbar>
-                </AppBar>
+        <div className="staff-layout">
+            <header className="app-bar">
+                <div className="toolbar">
+                    <h1 className="title">Staff Dashboard</h1>
+                    <button onClick={handleLogout}>
+                        Logout
+                        <img
+                            width="20"
+                            height="20"
+                            src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
+                            alt="exit--v1"
+                        />
+                    </button>
+                </div>
+            </header>
+            <div className="staff-ctm">
                 <Sidebar />
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 8 }}>
-                    <Toolbar />
+                <main className="main-content-staff">
                     {children}
-                </Box>
-            </Box>
-        </ThemeProvider>
+                </main>
+            </div>
+        </div>
     );
 };
 

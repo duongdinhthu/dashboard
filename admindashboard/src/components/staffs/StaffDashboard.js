@@ -1,28 +1,14 @@
-// src/components/staffs/StaffDashboard.js
-
 import React, { useState, useEffect } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, AppBar, Toolbar, Typography, Container, Box, Button, IconButton, MenuItem, Select, FormControl, InputLabel, Card, CardContent, Grid } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
-import EditAppointmentModal from "./EditAppointmentModal";
+import EditAppointmentModal from './EditAppointmentModal';
 import { useNavigate } from 'react-router-dom';
-import './StaffDashboard.css'; // Import file CSS
-
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-    },
-});
+import './StaffDashboard.css';
 
 const StaffDashboard = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [statusFilter, setStatusFilter] = useState('Pending');
     const [error, setError] = useState('');
     const [editItem, setEditItem] = useState(null);
-    const [showPendingAppointments, setShowPendingAppointments] = useState(true);
-    const [showConfirmedAppointments, setShowConfirmedAppointments] = useState(false);
-    const [showCompletedAppointments, setShowCompletedAppointments] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -85,7 +71,7 @@ const StaffDashboard = () => {
             await axios.put(`http://localhost:8080/api/v1/appointments/updateStatus`, {
                 appointment_id: appointmentId,
                 status: newStatus,
-                staff_id: staffId // Thêm ID của nhân viên
+                staff_id: staffId
             });
             setSearchResults((prevResults) =>
                 prevResults.map((item) =>
@@ -108,132 +94,66 @@ const StaffDashboard = () => {
         navigate('/stafflogin');
     };
 
-    const handleShowPendingAppointments = () => {
-        setShowPendingAppointments(true);
-        setShowConfirmedAppointments(false);
-        setShowCompletedAppointments(false);
-        fetchAppointments('Pending');
-    };
-
-    const handleShowConfirmedAppointments = () => {
-        setShowPendingAppointments(false);
-        setShowConfirmedAppointments(true);
-        setShowCompletedAppointments(false);
-        fetchAppointments('Confirmed');
-    };
-
-    const handleShowCompletedAppointments = () => {
-        setShowPendingAppointments(false);
-        setShowConfirmedAppointments(false);
-        setShowCompletedAppointments(true);
-        fetchAppointments('Completed');
-    };
-
     return (
-        <ThemeProvider theme={lightTheme}>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                    <Toolbar>
-                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                            Staff Dashboard
-                        </Typography>
-                        <Button color="inherit" onClick={handleLogout}>
-                            Logout
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, mt: 2 }}>
-                    <Toolbar />
-                    <Container>
-                        {error && <Typography color="error">{error}</Typography>}
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <FormControl sx={{ minWidth: 120, mr: 2 }}>
-                                <InputLabel>Status</InputLabel>
-                                <Select
-                                    value={statusFilter}
-                                    onChange={handleStatusChange}
-                                    label="Status"
-                                >
-                                    <MenuItem value="Pending">Pending</MenuItem>
-                                    <MenuItem value="Confirmed">Confirmed</MenuItem>
-                                    <MenuItem value="Completed">Completed</MenuItem>
-                                    <MenuItem value="Cancelled">Cancelled</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <IconButton onClick={() => fetchAppointments(statusFilter)} color="primary">
-                                <SearchIcon />
-                            </IconButton>
-                        </Box>
-                        <Typography variant="h6" gutterBottom>
-                            Appointment Data
-                        </Typography>
-                        <Grid container spacing={2}>
-                            {searchResults.map((appointment) => (
-                                <Grid item xs={12} md={6} lg={4} key={appointment.appointment_id}>
-                                    <Card>
-                                        <CardContent>
-                                            <Typography variant="h6" gutterBottom>
-                                                {appointment.patient_name}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Doctor Name:</strong> {appointment.doctor_name}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Slot:</strong> {appointment.slot}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Status:</strong> {appointment.status}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Payment Name:</strong> {appointment.payment_name}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Price:</strong> {appointment.price}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}
-                                            </Typography>
-                                            {appointment.status === 'Pending' && (
-                                                <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')} variant="contained" color="primary" style={{ marginTop: '8px', marginRight: '8px' }}>
-                                                    Confirm
-                                                </Button>
-                                            )}
-                                            {appointment.status === 'Confirmed' && (
-                                                <>
-                                                    <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')} variant="contained" color="success" style={{ marginTop: '8px', marginRight: '8px' }}>
-                                                        Complete
-                                                    </Button>
-                                                    <Button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')} variant="contained" color="secondary" style={{ marginTop: '8px', marginRight: '8px' }}>
-                                                        Cancel
-                                                    </Button>
-                                                </>
-                                            )}
-                                            <Button onClick={() => handleEditClick(appointment)} variant="outlined" style={{ marginTop: '8px', marginRight: '8px' }}>
-                                                Edit
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Container>
-                </Box>
-                {editItem && (
-                    <EditAppointmentModal
-                        appointment={editItem}
-                        onClose={handleEditModalClose}
-                        onSave={handleSaveEdit}
-                    />
-                )}
-            </Box>
-        </ThemeProvider>
+        <div className="staff-dashboard">
+            <div className="filter-section">
+                <label>Status:</label>
+                <select value={statusFilter} onChange={handleStatusChange}>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button onClick={() => fetchAppointments(statusFilter)}><img width="26" height="26"
+                                                                             src="https://img.icons8.com/metro/26/004B91/search.png"
+                                                                             alt="search"/></button>
+            </div>
+            <main>
+
+                {error && <p className="error-message">{error}</p>}
+                <section className="appointment-list">
+                    {searchResults.map((appointment) => (
+                        <div className="appointment-card" key={appointment.appointment_id}>
+                            <h2>{appointment.patient_name}</h2>
+                            <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
+                            <p><strong>Appointment
+                                Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
+                            <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}
+                            </p>
+                            <p><strong>Slot:</strong> {appointment.slot}</p>
+                            <p><strong>Status:</strong> {appointment.status}</p>
+                            <p><strong>Payment Name:</strong> {appointment.payment_name}</p>
+                            <p><strong>Price:</strong> {appointment.price}</p>
+                            <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
+                            {appointment.status === 'Pending' && (
+                                <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')}
+                                        className="action-button confirm-button">Confirm</button>
+                            )}
+                            {appointment.status === 'Confirmed' && (
+                                <>
+                                    <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')}
+                                            className="action-button complete-button">Complete
+                                    </button>
+                                    <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')}
+                                            className="action-button cancel-button">Cancel
+                                    </button>
+                                </>
+                            )}
+                            <button onClick={() => handleEditClick(appointment)}
+                                    className="action-button edit-button">Edit
+                            </button>
+                        </div>
+                    ))}
+                </section>
+            </main>
+            {editItem && (
+                <EditAppointmentModal
+                    appointment={editItem}
+                    onClose={handleEditModalClose}
+                    onSave={handleSaveEdit}
+                />
+            )}
+        </div>
     );
 };
 

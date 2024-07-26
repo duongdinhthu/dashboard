@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import './EditAppointmentModal.css';
 
 const EditAppointmentModal = ({ appointment, onClose, onSave }) => {
     const [editedAppointment, setEditedAppointment] = useState(appointment);
@@ -14,10 +14,10 @@ const EditAppointmentModal = ({ appointment, onClose, onSave }) => {
     };
 
     const handleSave = () => {
-        const staffId = localStorage.getItem('staff_id'); // Lấy staff_id từ localStorage
+        const staffId = localStorage.getItem('staff_id');
         const dataToSend = {
             ...editedAppointment,
-            staff_id: staffId // Thêm staff_id vào dữ liệu gửi
+            staff_id: staffId
         };
 
         axios.put('http://localhost:8080/api/v1/appointments/updateStatus', dataToSend)
@@ -31,26 +31,22 @@ const EditAppointmentModal = ({ appointment, onClose, onSave }) => {
     };
 
     return (
-        <Modal open={Boolean(appointment)} onClose={onClose}>
-            <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', p: 4, boxShadow: 24 }}>
-                <Typography variant="h6" gutterBottom>
-                    Edit Appointment
-                </Typography>
-                <TextField
-                    label="Status"
+        <div className={`modal ${Boolean(appointment) ? 'modal-open' : ''}`} onClick={onClose}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                <h2>Edit Appointment</h2>
+                <input
+                    type="text"
                     name="status"
                     value={editedAppointment.status}
                     onChange={handleChange}
-                    fullWidth
-                    sx={{ mb: 2 }}
+                    className="text-field"
                 />
-                {/* Add more fields as necessary */}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button onClick={onClose} sx={{ mr: 2 }}>Cancel</Button>
-                    <Button onClick={handleSave} variant="contained" color="primary">Save</Button>
-                </Box>
-            </Box>
-        </Modal>
+                <div className="modal-actions">
+                    <button className="cancel-button" onClick={onClose}>Cancel</button>
+                    <button className="save-button" onClick={handleSave}>Save</button>
+                </div>
+            </div>
+        </div>
     );
 };
 
