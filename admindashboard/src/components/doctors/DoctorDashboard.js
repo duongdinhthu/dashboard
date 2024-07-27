@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DoctorDashboard.css';
+import Sidebar from './Sidebar';
 
 const DoctorDashboard = () => {
     const [doctor, setDoctor] = useState(null);
@@ -84,6 +85,11 @@ const DoctorDashboard = () => {
 
     return (
         <div className="doctor-dashboard">
+            <Sidebar
+                onShowTodayAppointments={handleToggleTodayAppointments}
+                onShowMonthAppointments={handleToggleMonthAppointments}
+                onShowMedicalRecords={handleToggleMedicalRecords}
+            />
             <div className="content-doctor">
                 {error && <p className="error">{error}</p>}
                 {doctor && (

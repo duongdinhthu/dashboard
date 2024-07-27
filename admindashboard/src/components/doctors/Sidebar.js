@@ -1,6 +1,5 @@
 import React from 'react';
 import './Sidebar.css';
-import DoctorDashboard from "./DoctorDashboard";
 
 const Sidebar = ({ onShowTodayAppointments, onShowMonthAppointments, onShowMedicalRecords }) => {
     return (
