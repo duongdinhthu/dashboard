@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditAppointmentModal from './EditAppointmentModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './StaffDashboard.css';
 
 const StaffDashboard = () => {
@@ -10,10 +10,14 @@ const StaffDashboard = () => {
     const [error, setError] = useState('');
     const [editItem, setEditItem] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        fetchAppointments('Pending');
-    }, []);
+        const params = new URLSearchParams(location.search);
+        const status = params.get('status') || 'Pending';
+        setStatusFilter(status);
+        fetchAppointments(status);
+    }, [location.search]);
 
     const fetchAppointments = (status) => {
         axios.get(`http://localhost:8080/api/v1/appointments/search`, {
@@ -68,6 +72,11 @@ const StaffDashboard = () => {
     const handleUpdateStatus = async (appointmentId, newStatus) => {
         try {
             const staffId = localStorage.getItem('staffId');
+            console.log('Updating with staffId:', staffId); // Kiểm tra giá trị của staffId
+            if (!staffId) {
+                alert('Staff ID is missing. Please log in again.');
+                return;
+            }
             await axios.put(`http://localhost:8080/api/v1/appointments/updateStatus`, {
                 appointment_id: appointmentId,
                 status: newStatus,
@@ -104,22 +113,19 @@ const StaffDashboard = () => {
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
                 </select>
-                <button onClick={() => fetchAppointments(statusFilter)}><img width="26" height="26"
-                                                                             src="https://img.icons8.com/metro/26/004B91/search.png"
-                                                                             alt="search"/></button>
+                <button onClick={() => fetchAppointments(statusFilter)}>
+                    <img width="26" height="26" src="https://img.icons8.com/metro/26/004B91/search.png" alt="search"/>
+                </button>
             </div>
             <main>
-
                 {error && <p className="error-message">{error}</p>}
                 <section className="appointment-list">
                     {searchResults.map((appointment) => (
                         <div className="appointment-card" key={appointment.appointment_id}>
                             <h2>{appointment.patient_name}</h2>
                             <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                            <p><strong>Appointment
-                                Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
-                            <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}
-                            </p>
+                            <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
+                            <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
                             <p><strong>Slot:</strong> {appointment.slot}</p>
                             <p><strong>Status:</strong> {appointment.status}</p>
                             <p><strong>Payment Name:</strong> {appointment.payment_name}</p>
@@ -132,16 +138,13 @@ const StaffDashboard = () => {
                             {appointment.status === 'Confirmed' && (
                                 <>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')}
-                                            className="action-button complete-button">Complete
-                                    </button>
+                                            className="action-button complete-button">Complete</button>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')}
-                                            className="action-button cancel-button">Cancel
-                                    </button>
+                                            className="action-button cancel-button">Cancel</button>
                                 </>
                             )}
                             <button onClick={() => handleEditClick(appointment)}
-                                    className="action-button edit-button">Edit
-                            </button>
+                                    className="action-button edit-button">Edit</button>
                         </div>
                     ))}
                 </section>

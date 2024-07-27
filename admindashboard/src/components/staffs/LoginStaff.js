@@ -17,6 +17,7 @@ const LoginStaff = () => {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('role', 'staff');
                 localStorage.setItem('staffId', response.data.staff_id);
+                console.log('Logged in staffId:', response.data.staff_id); // Kiểm tra giá trị của staffId
                 navigate('/staffdashboard');
             } else {
                 setError('Bạn không có quyền truy cập.');
