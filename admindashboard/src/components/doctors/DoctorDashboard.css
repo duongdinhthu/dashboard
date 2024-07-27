@@ -6,9 +6,7 @@
     gap: 20px;
 }
 
-
 .logout-btn {
-
     color: #ffffff;
     display: flex;
     flex-direction: row;
@@ -76,6 +74,9 @@
     cursor: pointer;
 }
 
+.stat-card button:hover {
+    background-color: #003366;
+}
 
 ul {
     list-style: none;
@@ -92,4 +93,120 @@ ul {
 
 li p {
     margin: 0;
+}
+
+.select-status {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.update-status-btn {
+    padding: 5px 10px;
+    margin-top: 5px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.update-status-btn:hover {
+    background-color: #218838;
+}
+.doctor-dashboard {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logout-btn {
+    color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    gap: 5px;
+    border-radius: 4px;
+    margin-right: 30px;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}
+
+.content-doctor {
+    flex-grow: 1;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.error {
+    color: red;
+}
+
+.doctor-info h2 {
+    margin: 0;
+}
+
+.statistics {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.stat-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0 0 10px;
+}
+
+.stat-card p {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.stat-card button {
+    padding: 10px 20px;
+    background-color: #004B91;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.stat-card-apponin li {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+li p {
+    margin: 0;
+}
+
+select {
+    margin-right: 10px;
 }
