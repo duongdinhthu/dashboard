@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container, Box, List, ListItem, ListItemText, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Card, CardContent, Grid, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
-import Sidebar from './Sidebar'; // Thêm Sidebar
+import Sidebar from './Sidebar';
 
 const lightTheme = createTheme({
     palette: {
@@ -60,7 +60,6 @@ const DoctorDashboard = () => {
                     setError('Lỗi khi lấy thông tin bác sĩ');
                 });
 
-            // Lấy lịch khám hôm nay
             const today = new Date().toISOString().split('T')[0];
             axios.get('http://localhost:8080/api/v1/appointments/search', {
                 params: {
@@ -76,7 +75,6 @@ const DoctorDashboard = () => {
                     setError('Lỗi khi lấy lịch khám hôm nay');
                 });
 
-            // Lấy lịch khám trong tháng
             const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
             const lastDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
             axios.get('http://localhost:8080/api/v1/appointments/search', {
@@ -94,7 +92,6 @@ const DoctorDashboard = () => {
                     setError('Lỗi khi lấy lịch khám trong tháng');
                 });
 
-            // Lấy thông tin bệnh án của bác sĩ
             axios.get(`http://localhost:8080/api/v1/medicalrecords/doctor/${storedDoctorId}`)
                 .then(response => {
                     setMedicalRecords(response.data);
@@ -130,7 +127,6 @@ const DoctorDashboard = () => {
                 console.log('Cập nhật trạng thái thành công:', response.data);
                 setNewStatus('');
                 setSelectedAppointment(null);
-                // Tải lại lịch khám hôm nay
                 const today = new Date().toISOString().split('T')[0];
                 axios.get('http://localhost:8080/api/v1/appointments/search', {
                     params: {
@@ -216,7 +212,8 @@ const DoctorDashboard = () => {
             });
     };
 
-    const handleAddMedicalRecordOpen = () => {
+    const handleAddMedicalRecordOpen = (appointment) => {
+        setSelectedAppointment(appointment);
         setOpenAddMedicalRecordDialog(true);
     };
 
@@ -233,6 +230,11 @@ const DoctorDashboard = () => {
     };
 
     const handleAddMedicalRecordSubmit = () => {
+        if (!selectedAppointment) {
+            setError('No appointment selected');
+            return;
+        }
+
         const medicalRecordData = {
             ...newMedicalRecord,
             patient_id: selectedAppointment.patient_id,
