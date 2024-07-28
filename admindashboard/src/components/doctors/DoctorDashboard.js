@@ -22,6 +22,8 @@ const DoctorDashboard = () => {
     const [openMedicalRecordsDialog, setOpenMedicalRecordsDialog] = useState(false);
     const [openAddMedicalRecordDialog, setOpenAddMedicalRecordDialog] = useState(false);
     const [patientMedicalRecords, setPatientMedicalRecords] = useState([]);
+    const [patientName, setPatientName] = useState('');
+    const [patientEmail, setPatientEmail] = useState('');
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [showMonthAppointments, setShowMonthAppointments] = useState(false);
     const [showMedicalRecords, setShowMedicalRecords] = useState(false);
@@ -204,6 +206,16 @@ const DoctorDashboard = () => {
         })
             .then(response => {
                 setPatientMedicalRecords(response.data);
+                // Fetch patient details
+                axios.get(`http://localhost:8080/api/v1/patients/${patientId}`)
+                    .then(res => {
+                        setPatientName(res.data.patient_name);
+                        setPatientEmail(res.data.patient_email);
+                    })
+                    .catch(err => {
+                        console.error('Lỗi khi lấy thông tin bệnh nhân', err);
+                        setError('Lỗi khi lấy thông tin bệnh nhân');
+                    });
                 setOpenMedicalRecordsDialog(true);
             })
             .catch(error => {
@@ -417,9 +429,9 @@ const DoctorDashboard = () => {
                                                 primary={`Medical Record ID: ${record.record_id}`}
                                                 secondary={
                                                     <div style={{ whiteSpace: 'pre-line' }}>
-                                                        {`Symptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}
-                                                    </div>
-                                                }                                            />
+                                                        {`Patient Name: ${record.patients[0]?.patient_name || 'N/A'}\nPatient Email: ${record.patients[0]?.patient_email || 'N/A'}\nSymptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}                                                    </div>
+                                                }
+                                            />
                                         </ListItem>
                                     ))}
                                 </List>
@@ -487,6 +499,12 @@ const DoctorDashboard = () => {
                     <Dialog open={openMedicalRecordsDialog} onClose={handleCloseMedicalRecordsDialog}>
                         <DialogTitle>Medical Records</DialogTitle>
                         <DialogContent>
+                            <Typography variant="h6">
+                                Patient: {patientName}
+                            </Typography>
+                            <Typography variant="body1">
+                                Email: {patientEmail}
+                            </Typography>
                             <List>
                                 {patientMedicalRecords.map((record, index) => (
                                     <ListItem key={index}>
