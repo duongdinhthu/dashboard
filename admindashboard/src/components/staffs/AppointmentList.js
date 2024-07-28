@@ -9,6 +9,7 @@ const AppointmentList = ({ searchResults, handleEditClick, handleConfirmAppointm
                     <p><strong>Patient Name:</strong> {appointment.patient_name}</p>
                     <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
                     <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
+                    <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
                     <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
                     <p><strong>Slot:</strong> {appointment.slot}</p>
                     <p><strong>Status:</strong> {appointment.status}</p>

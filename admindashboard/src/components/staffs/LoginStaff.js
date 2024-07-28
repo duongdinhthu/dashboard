@@ -20,15 +20,15 @@ const LoginStaff = () => {
                 console.log('Logged in staffId:', response.data.staff_id); // Kiểm tra giá trị của staffId
                 navigate('/staffdashboard');
             } else {
-                setError('Bạn không có quyền truy cập.');
+                setError('You do not have access');
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                setError('Tên đăng nhập hoặc mật khẩu không đúng.');
+                setError('Username or password incorrect');
             } else if (error.response && error.response.status === 403) {
-                setError('Bạn không có quyền truy cập.');
+                setError('You do not have access');
             } else {
-                setError('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                setError('An error occurred, please try again later');
             }
         }
     };
@@ -36,10 +36,10 @@ const LoginStaff = () => {
     return (
         <div className="login-container">
             <div className="login-form">
-                <h2>Đăng nhập Nhân viên</h2>
+                <h2>Staff Login</h2>
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label>Tên đăng nhập:</label>
+                        <label>Username:</label>
                         <input
                             type="text"
                             value={username}
@@ -48,7 +48,7 @@ const LoginStaff = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Mật khẩu:</label>
+                        <label>Password:</label>
                         <input
                             type="password"
                             value={password}
@@ -57,7 +57,7 @@ const LoginStaff = () => {
                         />
                     </div>
                     {error && <p className="error-message">{error}</p>}
-                    <button type="submit" className="login-button">Đăng nhập</button>
+                    <button type="submit" className="login-button">Login</button>
                 </form>
             </div>
         </div>

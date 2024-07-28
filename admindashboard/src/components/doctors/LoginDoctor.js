@@ -20,24 +20,24 @@ const LoginDoctor = () => {
                 localStorage.setItem('doctor_id', response.data.doctor_id); // Lưu doctor_id vào localStorage
                 navigate('/doctordashboard'); // Chuyển hướng đến doctor dashboard sau khi đăng nhập thành công
             } else {
-                setError('Bạn không có quyền truy cập.');
+                setError('You do not have access');
             }
         } catch (error) {
             console.log('Error response:', error); // Log error response
             if (error.response && error.response.status === 401) {
-                setError('Tên đăng nhập hoặc mật khẩu không đúng.');
+                setError('Username or password incorrect');
             } else {
-                setError('Đã xảy ra lỗi, vui lòng thử lại sau.');
+                setError('An error occurred, please try again later');
             }
         }
     };
 
     return (
         <div className="login-container">
-            <h2>Đăng nhập Bác sĩ</h2>
+            <h2>Doctor Login</h2>
             <form onSubmit={handleLogin} className="login-form">
                 <div className="form-group">
-                    <label>Tên đăng nhập:</label>
+                    <label>Username:</label>
                     <input
                         type="text"
                         value={username}
@@ -46,7 +46,7 @@ const LoginDoctor = () => {
                     />
                 </div>
                 <div className="form-group">
-                    <label>Mật khẩu:</label>
+                    <label>Password:</label>
                     <input
                         type="password"
                         value={password}
@@ -55,7 +55,7 @@ const LoginDoctor = () => {
                     />
                 </div>
                 {error && <p className="error-message">{error}</p>}
-                <button type="submit" className="login-button">Đăng nhập</button>
+                <button type="submit" className="login-button">Login</button>
             </form>
         </div>
     );
