@@ -291,10 +291,7 @@ const DoctorDashboard = () => {
                         {error && <Typography color="error">{error}</Typography>}
                         {doctor && (
                             <Box>
-                                <Typography variant="h6">Chào mừng, Dr. {doctor.doctor_name}</Typography>
-                                <Typography variant="body1">Email: {doctor.doctor_email}</Typography>
-                                <Typography variant="body1">Địa chỉ: {doctor.doctor_address}</Typography>
-                                <Typography variant="body1">Tình trạng làm việc: {doctor.working_status}</Typography>
+                                <Typography variant="h6">Welcome, {doctor.doctor_name}</Typography>
                                 <Button color="inherit" onClick={handleEditOpen}>
                                     Edit Profile
                                 </Button>
@@ -305,13 +302,13 @@ const DoctorDashboard = () => {
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6">
-                                            Lịch khám hôm nay
+                                            Today's Appointment
                                         </Typography>
                                         <Typography variant="h4">
                                             {todayAppointments.length}
                                         </Typography>
                                         <Button variant="contained" color="primary" onClick={handleToggleTodayAppointments} fullWidth>
-                                            {showTodayAppointments ? "Ẩn lịch khám hôm nay" : "Hiện lịch khám hôm nay"}
+                                            {showTodayAppointments ? "Hide Today's Appointment" : "Show Today's Appointment"}
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -320,13 +317,13 @@ const DoctorDashboard = () => {
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6">
-                                            Lịch khám trong tháng
+                                            Monthly Appointment
                                         </Typography>
                                         <Typography variant="h4">
                                             {monthAppointments.length}
                                         </Typography>
                                         <Button variant="contained" color="primary" onClick={handleToggleMonthAppointments} fullWidth>
-                                            {showMonthAppointments ? "Ẩn lịch khám trong tháng" : "Hiện lịch khám trong tháng"}
+                                            {showMonthAppointments ? "Hide Monthly Appointment" : "Show Monthly Appointment"}
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -335,13 +332,13 @@ const DoctorDashboard = () => {
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6">
-                                            Bệnh án
+                                            Medical Records
                                         </Typography>
                                         <Typography variant="h4">
                                             {medicalRecords.length}
                                         </Typography>
                                         <Button variant="contained" color="primary" onClick={handleToggleMedicalRecords} fullWidth>
-                                            {showMedicalRecords ? "Ẩn bệnh án" : "Hiện bệnh án"}
+                                            {showMedicalRecords ? "Hide Medical Records" : "Show Medical Records"}
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -350,14 +347,14 @@ const DoctorDashboard = () => {
                         {showTodayAppointments && (
                             <>
                                 <Typography variant="h6" gutterBottom>
-                                    Lịch khám hôm nay
+                                    Today's Appointment
                                 </Typography>
                                 <List>
                                     {todayAppointments.map((appointment, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={`Bệnh nhân: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
-                                                secondary={`Ngày khám: ${new Date(appointment.medical_day).toLocaleDateString()} - Thời gian: ${getTimeFromSlot(appointment.slot)} - Trạng thái: ${appointment.status}`}
+                                                primary={`Patient: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
+                                                secondary={`Date: ${new Date(appointment.medical_day).toLocaleDateString()} - Time: ${getTimeFromSlot(appointment.slot)} - Status: ${appointment.status}`}
                                             />
                                             <Select
                                                 value={newStatus}
@@ -375,10 +372,10 @@ const DoctorDashboard = () => {
                                                 Update Status
                                             </Button>
                                             <Button onClick={() => handleShowMedicalRecords(appointment.patient?.[0]?.patient_id)}>
-                                                Hiển thị bệnh án
+                                                Show Medical Records
                                             </Button>
                                             <Button onClick={() => handleAddMedicalRecordOpen(appointment)}>
-                                                Thêm bệnh án
+                                                Add Medical Records
                                             </Button>
                                         </ListItem>
                                     ))}
@@ -388,20 +385,20 @@ const DoctorDashboard = () => {
                         {showMonthAppointments && (
                             <>
                                 <Typography variant="h6" gutterBottom>
-                                    Lịch khám trong tháng
+                                    Monthly Appointment
                                 </Typography>
                                 <List>
                                     {monthAppointments.map((appointment, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={`Bệnh nhân: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
-                                                secondary={`Ngày khám: ${new Date(appointment.medical_day).toLocaleDateString()} - Thời gian: ${getTimeFromSlot(appointment.slot)} - Trạng thái: ${appointment.status}`}
+                                                primary={`Patient: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
+                                                secondary={`Date: ${new Date(appointment.medical_day).toLocaleDateString()} - Time: ${getTimeFromSlot(appointment.slot)} - Status: ${appointment.status}`}
                                             />
                                             <Button onClick={() => handleShowMedicalRecords(appointment.patient?.[0]?.patient_id)}>
-                                                Hiển thị bệnh án
+                                                Show Medical Records
                                             </Button>
                                             <Button onClick={() => handleAddMedicalRecordOpen(appointment)}>
-                                                Thêm bệnh án
+                                                Add Medical Records
                                             </Button>
                                         </ListItem>
                                     ))}
@@ -411,15 +408,18 @@ const DoctorDashboard = () => {
                         {showMedicalRecords && (
                             <>
                                 <Typography variant="h6" gutterBottom>
-                                    Bệnh án
+                                    Medical Records
                                 </Typography>
                                 <List>
                                     {medicalRecords.map((record, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={`ID bệnh án: ${record.medicalrecord_id}`}
-                                                secondary={`Triệu chứng: ${record.symptoms}, Chẩn đoán: ${record.diagnosis}`}
-                                            />
+                                                primary={`Medical Record ID: ${record.record_id}`}
+                                                secondary={
+                                                    <div style={{ whiteSpace: 'pre-line' }}>
+                                                        {`Symptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}
+                                                    </div>
+                                                }                                            />
                                         </ListItem>
                                     ))}
                                 </List>
@@ -441,7 +441,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="doctor_address"
-                                label="Địa chỉ"
+                                label="Address"
                                 type="text"
                                 fullWidth
                                 value={editData.doctor_address}
@@ -450,7 +450,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="current_password"
-                                label="Mật khẩu hiện tại"
+                                label="Current Password"
                                 type="password"
                                 fullWidth
                                 value={editData.current_password}
@@ -459,7 +459,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="new_password"
-                                label="Mật khẩu mới"
+                                label="New Password"
                                 type="password"
                                 fullWidth
                                 value={editData.new_password}
@@ -468,7 +468,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="confirm_new_password"
-                                label="Xác nhận mật khẩu mới"
+                                label="Confirm New Password"
                                 type="password"
                                 fullWidth
                                 value={editData.confirm_new_password}
@@ -477,22 +477,34 @@ const DoctorDashboard = () => {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleEditClose} color="primary">
-                                Hủy bỏ
+                                Cancel
                             </Button>
                             <Button onClick={handleEditSubmit} color="primary">
-                                Lưu
+                                Save
                             </Button>
                         </DialogActions>
                     </Dialog>
                     <Dialog open={openMedicalRecordsDialog} onClose={handleCloseMedicalRecordsDialog}>
-                        <DialogTitle>Bệnh án</DialogTitle>
+                        <DialogTitle>Medical Records</DialogTitle>
                         <DialogContent>
                             <List>
                                 {patientMedicalRecords.map((record, index) => (
                                     <ListItem key={index}>
                                         <ListItemText
-                                            primary={`ID bệnh án: ${record.medicalrecord_id}`}
-                                            secondary={`Triệu chứng: ${record.symptoms}, Chẩn đoán: ${record.diagnosis}`}
+                                            primary={`Medical Record ID: ${record.record_id}`}
+                                            secondary={
+                                                <div style={{
+                                                    whiteSpace: 'pre-line',
+                                                    width: '500px',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    border: '1px solid rgba(0,0,0,0.2)',
+                                                    borderRadius: '4px',
+                                                    padding: '10px'
+                                                }}>
+                                                    {`Symptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}
+                                                </div>
+                                            }
                                         />
                                     </ListItem>
                                 ))}
@@ -500,17 +512,17 @@ const DoctorDashboard = () => {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleCloseMedicalRecordsDialog} color="primary">
-                                Đóng
+                                Close
                             </Button>
                         </DialogActions>
                     </Dialog>
                     <Dialog open={openAddMedicalRecordDialog} onClose={handleAddMedicalRecordClose}>
-                        <DialogTitle>Thêm bệnh án</DialogTitle>
+                        <DialogTitle>Add Medical Records</DialogTitle>
                         <DialogContent>
                             <TextField
                                 margin="dense"
                                 name="symptoms"
-                                label="Triệu chứng"
+                                label="Symptoms"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.symptoms}
@@ -519,7 +531,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="diagnosis"
-                                label="Chẩn đoán"
+                                label="Diagnosis"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.diagnosis}
@@ -528,7 +540,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="treatment"
-                                label="Điều trị"
+                                label="Treatment"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.treatment}
@@ -537,7 +549,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="test_urine"
-                                label="Xét nghiệm nước tiểu"
+                                label="Urine Tests"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.test_urine}
@@ -546,7 +558,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="test_blood"
-                                label="Xét nghiệm máu"
+                                label="Blood Tests"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.test_blood}
@@ -555,7 +567,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="x_ray"
-                                label="X-Quang"
+                                label="X-Ray"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.x_ray}
@@ -564,10 +576,10 @@ const DoctorDashboard = () => {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleAddMedicalRecordClose} color="primary">
-                                Hủy bỏ
+                                Cancel
                             </Button>
                             <Button onClick={handleAddMedicalRecordSubmit} color="primary">
-                                Thêm
+                                Add
                             </Button>
                         </DialogActions>
                     </Dialog>
