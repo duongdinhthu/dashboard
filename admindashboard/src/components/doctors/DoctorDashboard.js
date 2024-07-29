@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container, Box, List, ListItem, ListItemText, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Card, CardContent, Grid, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 import Sidebar from './Sidebar';
-import '../doctors/DoctorDashboard.css';
+import './DoctorDashboard.css';
 
 const lightTheme = createTheme({
     palette: {
@@ -12,6 +12,7 @@ const lightTheme = createTheme({
 });
 
 const DoctorDashboard = () => {
+    const [activeView, setActiveView] = useState(null); // 'today', 'month', 'records', or null
     const [doctor, setDoctor] = useState(null);
     const [todayAppointments, setTodayAppointments] = useState([]);
     const [monthAppointments, setMonthAppointments] = useState([]);
@@ -279,15 +280,27 @@ const DoctorDashboard = () => {
     };
 
     const handleToggleTodayAppointments = () => {
-        setShowTodayAppointments(!showTodayAppointments);
+        if (activeView === 'today') {
+            setActiveView(null);
+        } else {
+            setActiveView('today');
+        }
     };
 
     const handleToggleMonthAppointments = () => {
-        setShowMonthAppointments(!showMonthAppointments);
+        if (activeView === 'month') {
+            setActiveView(null);
+        } else {
+            setActiveView('month');
+        }
     };
 
     const handleToggleMedicalRecords = () => {
-        setShowMedicalRecords(!showMedicalRecords);
+        if (activeView === 'records') {
+            setActiveView(null);
+        } else {
+            setActiveView('records');
+        }
     };
 
     return (
@@ -367,9 +380,9 @@ const DoctorDashboard = () => {
                                 </Card>
                             </Grid>
                         </Grid>
-                        {showTodayAppointments && (
+                        {activeView === 'today' && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91', textAlign:'center'}}>
                                     Today's Appointments Schedule
                                 </Typography>
                                 <List>
@@ -405,9 +418,9 @@ const DoctorDashboard = () => {
                                 </List>
                             </>
                         )}
-                        {showMonthAppointments && (
+                        {activeView === 'month' && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91', textAlign:'center'}}>
                                     Monthly Appointments Schedule
                                 </Typography>
                                 <List>
@@ -428,9 +441,9 @@ const DoctorDashboard = () => {
                                 </List>
                             </>
                         )}
-                        {showMedicalRecords && (
+                        {activeView === 'records' && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91', textAlign:'center'}}>
                                     Medical Records
                                 </Typography>
                                 <List>
