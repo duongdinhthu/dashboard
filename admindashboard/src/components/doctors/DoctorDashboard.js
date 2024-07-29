@@ -25,6 +25,8 @@ const DoctorDashboard = () => {
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [showMonthAppointments, setShowMonthAppointments] = useState(false);
     const [showMedicalRecords, setShowMedicalRecords] = useState(false);
+    const [patientName, setPatientName] = useState('');
+    const [patientEmail, setPatientEmail] = useState('');
     const [newMedicalRecord, setNewMedicalRecord] = useState({
         symptoms: '',
         diagnosis: '',
@@ -204,6 +206,16 @@ const DoctorDashboard = () => {
         })
             .then(response => {
                 setPatientMedicalRecords(response.data);
+                // Fetch patient details
+                axios.get(`http://localhost:8080/api/v1/patients/${patientId}`)
+                    .then(res => {
+                        setPatientName(res.data.patient_name);
+                        setPatientEmail(res.data.patient_email);
+                    })
+                    .catch(err => {
+                        console.error('Lỗi khi lấy thông tin bệnh nhân', err);
+                        setError('Lỗi khi lấy thông tin bệnh nhân');
+                    });
                 setOpenMedicalRecordsDialog(true);
             })
             .catch(error => {
@@ -418,8 +430,11 @@ const DoctorDashboard = () => {
                                     {medicalRecords.map((record, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={`Medical record ID: ${record.medicalrecord_id}`}
-                                                secondary={`Symptom: ${record.symptoms}, Diagnose: ${record.diagnosis}`}
+                                                primary={`Medical Record ID: ${record.record_id}`}
+                                                secondary={
+                                                    <div style={{ whiteSpace: 'pre-line' }}>
+                                                        {`Patient Name: ${record.patients[0]?.patient_name || 'N/A'}\nPatient Email: ${record.patients[0]?.patient_email || 'N/A'}\nSymptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}                                                    </div>
+                                                }
                                             />
                                         </ListItem>
                                     ))}
