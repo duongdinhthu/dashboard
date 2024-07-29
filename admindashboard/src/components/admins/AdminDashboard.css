@@ -234,3 +234,11 @@ h2{
     font-weight: bold;
     font-size: 24px;
 }
+
+
+@media (max-width: 1000px) {
+    .stats{
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
