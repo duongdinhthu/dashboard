@@ -18,7 +18,7 @@ const DoctorLayout = ({ children, onShowTodayAppointments, onShowMonthAppointmen
             <header className="app-bar-doctor">
                 <div className="toolbar-doctor">
                     <h1 className="app-bar-title">Doctor Dashboard</h1>
-                    <button onClick={handleLogout}>
+                    <button onClick={handleLogout} >
                         Logout
                         <img
                             width="20"

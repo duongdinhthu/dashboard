@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container, Box, List, ListItem, ListItemText, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Card, CardContent, Grid, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 import Sidebar from './Sidebar';
+import '../doctors/DoctorDashboard.css';
 
 const lightTheme = createTheme({
     palette: {
@@ -299,15 +300,15 @@ const DoctorDashboard = () => {
                 />
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                     <Container sx={{height:'100vh'}}>
-                        {error && <Typography color="error">{error}</Typography>}
+                        {/*{error && <Typography color="error">{error}</Typography>}*/}
                         {doctor && (
                             <Box>
-                                <Typography variant="h6" sx={{color:' #004B91'}}>Welcome, Dr. {doctor.doctor_name}</Typography>
+                                <Typography variant="h5" sx={{color:' #004B91'}}>Welcome, {doctor.doctor_name}</Typography>
                                 <Typography variant="body1">Email: {doctor.doctor_email}</Typography>
                                     <Typography variant="body1">Address: {doctor.doctor_address}</Typography>
                                 <Typography variant="body1">Working status: {doctor.working_status}</Typography>
-                                <Button color="inherit" onClick={handleEditOpen} sx={{marginBottom:'20px', bgcolor:' #1976d2', color:'#fff',  '&:hover':{
-                                    color:'#000'
+                                <Button color="inherit" onClick={handleEditOpen} sx={{margin:'10px 0 20px 0', backgroundColor:' #004B91' ,color:'#fff', '&:hover':{
+                                    color:'#004B91', backgroundColor:'#fff', boxShadow:'0 0 3px #004B91'
                                     },}}>
                                     Edit Profile
                                 </Button>
@@ -317,13 +318,15 @@ const DoctorDashboard = () => {
                             <Grid item xs={12} md={4}>
                                 <Card >
                                     <CardContent sx={{textAlign:'center'}}>
-                                        <Typography variant="h6">
-                                            Today's appointment schedule
+                                        <Typography variant="h6" sx={{color:'#004B91'}}>
+                                            Today's Appointment Schedule
                                         </Typography>
                                         <Typography variant="h4">
                                             {todayAppointments.length}
                                         </Typography>
-                                        <Button variant="contained" color="primary" onClick={handleToggleTodayAppointments} fullWidth>
+                                        <Button variant="contained" color="primary" onClick={handleToggleTodayAppointments} fullWidth sx={{margin:'10px 0', backgroundColor:' #004B91' ,color:'#fff', '&:hover':{
+                                                color:'#004B91', backgroundColor:'#fff', boxShadow:'0 0 3px #004B91'
+                                            },}}>
                                             {showTodayAppointments ? "Hide today's appointment" : "View today's appointments"}
                                         </Button>
                                     </CardContent>
@@ -332,13 +335,15 @@ const DoctorDashboard = () => {
                             <Grid item xs={12} md={4}>
                                 <Card>
                                     <CardContent  sx={{textAlign:'center'}}>
-                                        <Typography variant="h6">
-                                            Monthly appointments
+                                        <Typography variant="h6" sx={{color:'#004B91'}}>
+                                            Monthly Appointments
                                         </Typography>
                                         <Typography variant="h4">
                                             {monthAppointments.length}
                                         </Typography>
-                                        <Button variant="contained" color="primary" onClick={handleToggleMonthAppointments} fullWidth>
+                                        <Button variant="contained" color="primary" onClick={handleToggleMonthAppointments} fullWidth sx={{margin:'10px 0', backgroundColor:' #004B91' ,color:'#fff', '&:hover':{
+                                                color:'#004B91', backgroundColor:'#fff', boxShadow:'0 0 3px #004B91'
+                                            },}}>
                                             {showMonthAppointments ? "Hide monthly appointment" : "View monthly appointments"}
                                         </Button>
                                     </CardContent>
@@ -347,13 +352,15 @@ const DoctorDashboard = () => {
                             <Grid item xs={12} md={4}>
                                 <Card>
                                     <CardContent  sx={{textAlign:'center'}}>
-                                        <Typography variant="h6">
-                                            Patient
+                                        <Typography variant="h6" sx={{color:'#004B91'}}>
+                                            Medical Records
                                         </Typography>
                                         <Typography variant="h4">
                                             {medicalRecords.length}
                                         </Typography>
-                                        <Button variant="contained" color="primary" onClick={handleToggleMedicalRecords} fullWidth>
+                                        <Button variant="contained" color="primary" onClick={handleToggleMedicalRecords} fullWidth sx={{margin:'10px 0', backgroundColor:' #004B91' ,color:'#fff', '&:hover':{
+                                                color:'#004B91', backgroundColor:'#fff', boxShadow:'0 0 3px #004B91'
+                                            },}}>
                                             {showMedicalRecords ? "Hide medical record" : "View medical record"}
                                         </Button>
                                     </CardContent>
@@ -362,15 +369,15 @@ const DoctorDashboard = () => {
                         </Grid>
                         {showTodayAppointments && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#1565c0'}}>
-                                    Today's appointment schedule
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                    Today's Appointments Schedule
                                 </Typography>
                                 <List>
                                     {todayAppointments.map((appointment, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
                                                 primary={`Patient: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
-                                                secondary={`Day of the examination: ${new Date(appointment.medical_day).toLocaleDateString()} - Thời gian: ${getTimeFromSlot(appointment.slot)} - Trạng thái: ${appointment.status}`}
+                                                secondary={`Date: ${new Date(appointment.medical_day).toLocaleDateString()} - Time: ${getTimeFromSlot(appointment.slot)} - Status: ${appointment.status}`}
                                             />
                                             <Select
                                                 value={newStatus}
@@ -400,20 +407,20 @@ const DoctorDashboard = () => {
                         )}
                         {showMonthAppointments && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#1565c0'}}>
-                                    Monthly medical examination schedule
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                    Monthly Appointments Schedule
                                 </Typography>
                                 <List>
                                     {monthAppointments.map((appointment, index) => (
                                         <ListItem key={index}>
                                             <ListItemText
-                                                primary={`Bệnh nhân: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
-                                                secondary={`Ngày khám: ${new Date(appointment.medical_day).toLocaleDateString()} - Thời gian: ${getTimeFromSlot(appointment.slot)} - Trạng thái: ${appointment.status}`}
+                                                primary={`Patient: ${appointment.patient?.[0]?.patient_name || 'N/A'}`}
+                                                secondary={`Date: ${new Date(appointment.medical_day).toLocaleDateString()} - Time: ${getTimeFromSlot(appointment.slot)} - Status: ${appointment.status}`}
                                             />
-                                            <Button onClick={() => handleShowMedicalRecords(appointment.patient?.[0]?.patient_id)}>
+                                            <Button onClick={() => handleShowMedicalRecords(appointment.patient?.[0]?.patient_id)} sx={{color:'#004B91'}}>
                                                 Show medical records
                                             </Button>
-                                            <Button onClick={() => handleAddMedicalRecordOpen(appointment)}>
+                                            <Button onClick={() => handleAddMedicalRecordOpen(appointment)} sx={{color:'#004B91'}}>
                                                 Add medical record
                                             </Button>
                                         </ListItem>
@@ -423,8 +430,8 @@ const DoctorDashboard = () => {
                         )}
                         {showMedicalRecords && (
                             <>
-                                <Typography variant="h6" gutterBottom sx={{color:'#1565c0'}}>
-                                    Patient
+                                <Typography variant="h6" gutterBottom sx={{color:'#004B91'}}>
+                                    Medical Records
                                 </Typography>
                                 <List>
                                     {medicalRecords.map((record, index) => (
@@ -432,8 +439,42 @@ const DoctorDashboard = () => {
                                             <ListItemText
                                                 primary={`Medical Record ID: ${record.record_id}`}
                                                 secondary={
-                                                    <div style={{ whiteSpace: 'pre-line' }}>
-                                                        {`Patient Name: ${record.patients[0]?.patient_name || 'N/A'}\nPatient Email: ${record.patients[0]?.patient_email || 'N/A'}\nSymptoms: ${record.symptoms}\nDiagnosis: ${record.diagnosis}\nTreatment: ${record.treatment}\nUrine Tests: ${record.test_urine}\nBlood Tests: ${record.test_blood}\nX-Ray: ${record.x_ray}`}                                                    </div>
+                                                    <Box
+                                                        sx={{
+                                                            whiteSpace: 'pre-line',
+                                                            display: 'grid',
+                                                            gridTemplateColumns: '1fr 2fr',
+                                                            gap: 2,
+                                                            border: '1px solid #ccc',
+                                                            borderRadius: 1,
+                                                            padding: 2,
+                                                            backgroundColor: '#f9f9f9'
+                                                        }}
+                                                    >
+                                                        <div><strong>Patient Name:</strong></div>
+                                                        <div>{record.patients[0]?.patient_name || 'N/A'}</div>
+
+                                                        <div><strong>Patient Email:</strong></div>
+                                                        <div>{record.patients[0]?.patient_email || 'N/A'}</div>
+
+                                                        <div><strong>Symptoms:</strong></div>
+                                                        <div>{record.symptoms}</div>
+
+                                                        <div><strong>Diagnosis:</strong></div>
+                                                        <div>{record.diagnosis}</div>
+
+                                                        <div><strong>Treatment:</strong></div>
+                                                        <div>{record.treatment}</div>
+
+                                                        <div><strong>Urine Tests:</strong></div>
+                                                        <div>{record.test_urine}</div>
+
+                                                        <div><strong>Blood Tests:</strong></div>
+                                                        <div>{record.test_blood}</div>
+
+                                                        <div><strong>X-Ray:</strong></div>
+                                                        <div>{record.x_ray}</div>
+                                                    </Box>
                                                 }
                                             />
                                         </ListItem>
@@ -443,7 +484,7 @@ const DoctorDashboard = () => {
                         )}
                     </Container>
                     <Dialog open={openEditDialog} onClose={handleEditClose}>
-                        <DialogTitle>Edit personal information</DialogTitle>
+                        <DialogTitle sx={{color:'#004B91'}}>Edit Personal Information</DialogTitle>
                         <DialogContent>
                             <TextField
                                 margin="dense"
@@ -466,7 +507,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="current_password"
-                                label="current password"
+                                label="Current Password"
                                 type="password"
                                 fullWidth
                                 value={editData.current_password}
@@ -475,7 +516,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="new_password"
-                                label="new password"
+                                label="New Password"
                                 type="password"
                                 fullWidth
                                 value={editData.new_password}
@@ -484,7 +525,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="confirm_new_password"
-                                label="Confirm new password"
+                                label="Confirm New Password"
                                 type="password"
                                 fullWidth
                                 value={editData.confirm_new_password}
@@ -492,31 +533,68 @@ const DoctorDashboard = () => {
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleEditClose} color="primary">
-                                Hủy bỏ
+                            <Button onClick={handleEditClose} sx={{color:'red'}}>
+                                Cancel
                             </Button>
-                            <Button onClick={handleEditSubmit} color="primary">
-                                Lưu
+                            <Button onClick={handleEditSubmit} sx={{color:'#004B91'}}>
+                                Save
                             </Button>
                         </DialogActions>
                     </Dialog>
                     <Dialog open={openMedicalRecordsDialog} onClose={handleCloseMedicalRecordsDialog}>
-                        <DialogTitle>Patient</DialogTitle>
+                        <DialogTitle>Medical Records</DialogTitle>
                         <DialogContent>
                             <List>
                                 {patientMedicalRecords.map((record, index) => (
                                     <ListItem key={index}>
                                         <ListItemText
-                                            primary={`Medical record ID: ${record.medicalrecord_id}`}
-                                            secondary={`Symptom: ${record.symptoms}, Diagnose: ${record.diagnosis}`}
+                                            primary={`Medical Record ID: ${record.record_id}`}
+                                            secondary={
+                                                <Box
+                                                    sx={{
+                                                        whiteSpace: 'pre-line',
+                                                        display: 'grid',
+                                                        gridTemplateColumns: '1fr 2fr',
+                                                        gap: 2,
+                                                        border: '1px solid #ccc',
+                                                        borderRadius: 1,
+                                                        padding: 2,
+                                                        backgroundColor: '#f9f9f9'
+                                                    }}
+                                                >
+                                                    <div><strong>Patient Name:</strong></div>
+                                                    <div>{record.patients[0]?.patient_name || 'N/A'}</div>
+
+                                                    <div><strong>Patient Email:</strong></div>
+                                                    <div>{record.patients[0]?.patient_email || 'N/A'}</div>
+
+                                                    <div><strong>Symptoms:</strong></div>
+                                                    <div>{record.symptoms}</div>
+
+                                                    <div><strong>Diagnosis:</strong></div>
+                                                    <div>{record.diagnosis}</div>
+
+                                                    <div><strong>Treatment:</strong></div>
+                                                    <div>{record.treatment}</div>
+
+                                                    <div><strong>Urine Tests:</strong></div>
+                                                    <div>{record.test_urine}</div>
+
+                                                    <div><strong>Blood Tests:</strong></div>
+                                                    <div>{record.test_blood}</div>
+
+                                                    <div><strong>X-Ray:</strong></div>
+                                                    <div>{record.x_ray}</div>
+                                                </Box>
+                                            }
                                         />
                                     </ListItem>
                                 ))}
                             </List>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleCloseMedicalRecordsDialog} color="primary">
-                                Đóng
+                            <Button onClick={handleCloseMedicalRecordsDialog} sx={{color:'red'}}>
+                                Close
                             </Button>
                         </DialogActions>
                     </Dialog>
@@ -526,7 +604,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="symptoms"
-                                label=" Diagnose"
+                                label="Symptoms"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.symptoms}
@@ -535,7 +613,7 @@ const DoctorDashboard = () => {
                             <TextField
                                 margin="dense"
                                 name="diagnosis"
-                                label=" Diagnose"
+                                label="Diagnose"
                                 type="text"
                                 fullWidth
                                 value={newMedicalRecord.diagnosis}
@@ -579,10 +657,10 @@ const DoctorDashboard = () => {
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleAddMedicalRecordClose} color="primary">
+                            <Button onClick={handleAddMedicalRecordClose} sx={{color:'red'}}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleAddMedicalRecordSubmit} color="primary">
+                            <Button onClick={handleAddMedicalRecordSubmit} sx={{color:'#004B91'}}>
                                 More
                             </Button>
                         </DialogActions>

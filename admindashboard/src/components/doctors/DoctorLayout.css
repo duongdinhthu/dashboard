@@ -65,10 +65,10 @@
 }
 
 .content-doctor-layout{
-    height: 100vh;
+    height: 85vh;
     flex-grow: 1;
     /*padding: 20px;*/
     background-color: #f5f5f5;
-    margin-left: 252px; /* This should be the width of the sidebar */
+    margin-left: 250px; /* This should be the width of the sidebar */
     overflow-y: auto;
 }

@@ -168,3 +168,17 @@ li p {
 .dialog-actions button:hover {
     background-color: #003366;
 }
+
+.record-card {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.record-card strong {
+    font-weight: bold;
+}
