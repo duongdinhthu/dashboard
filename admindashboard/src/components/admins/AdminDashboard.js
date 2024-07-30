@@ -1,3 +1,5 @@
+// src/components/admins/AdminDashboard.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +21,12 @@ const AdminDashboard = () => {
     const [showTodayAppointments, setShowTodayAppointments] = useState(false);
     const [feedbacks, setFeedbacks] = useState([]);
     const [error, setError] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchType, setSearchType] = useState('patients');
+    const [searchResults, setSearchResults] = useState([]);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [status, setStatus] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -102,6 +110,61 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearchTypeChange = (e) => {
+        setSearchType(e.target.value);
+    };
+
+    const handleStartDateChange = (e) => {
+        setStartDate(e.target.value);
+    };
+
+    const handleEndDateChange = (e) => {
+        setEndDate(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setStatus(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        let url = '';
+        let params = {};
+
+        switch (searchType) {
+            case 'patients':
+                url = 'http://localhost:8080/api/v1/patients/search-new';
+                params = { keyword: searchQuery };
+                break;
+            case 'staff':
+                url = 'http://localhost:8080/api/v1/staffs/search-new';
+                params = { keyword: searchQuery };
+                break;
+            case 'appointments':
+                url = 'http://localhost:8080/api/v1/appointments/search-new';
+                params = { start_date: startDate, end_date: endDate, status: status };
+                break;
+            case 'doctors':
+                url = 'http://localhost:8080/api/v1/doctors/search-new';
+                params = { keyword: searchQuery };
+                break;
+            default:
+                return;
+        }
+
+        try {
+            const response = await axios.get(url, { params });
+            setSearchResults(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error searching data', error);
+            setError('Error searching data');
+        }
+    };
+
     const handleOpenFeedbackModal = () => {
         setIsFeedbackModalOpen(true);
     };
@@ -168,7 +231,42 @@ const AdminDashboard = () => {
             <div className="main-content">
                 <div className="topbar">
                     <div className="search">
-                        {/*<input type="text" placeholder="Search..." />*/}
+                        <select value={searchType} onChange={handleSearchTypeChange}>
+                            <option value="patients">Patients</option>
+                            <option value="staff">Staff</option>
+                            <option value="appointments">Appointments</option>
+                            <option value="doctors">Doctors</option>
+                        </select>
+                        {searchType === 'appointments' ? (
+                            <>
+                                <input
+                                    type="date"
+                                    placeholder="Start Date"
+                                    value={startDate}
+                                    onChange={handleStartDateChange}
+                                />
+                                <input
+                                    type="date"
+                                    placeholder="End Date"
+                                    value={endDate}
+                                    onChange={handleEndDateChange}
+                                />
+                                <select value={status} onChange={handleStatusChange}>
+                                    <option value="">All Statuses</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </>
+                        ) : (
+                            <input
+                                type="text"
+                                placeholder={searchType === 'patients' || searchType === 'staff' || searchType === 'doctors' ? "Name or Email" : "Search..."}
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                            />
+                        )}
+                        <button onClick={handleSearch}>Search</button>
                     </div>
                     <div className="profile">
                         <span>Admin</span>
@@ -178,8 +276,8 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 <div className="content">
-                <h2>Dashboard</h2>
-                    {/*{error && <div className="error">{error}</div>}*/}
+                    <h2>Dashboard</h2>
+                    {error && <div className="error">{error}</div>}
 
                     <div className="stats">
                         <div className="card" onClick={handleOpenDoctorsPage}>
@@ -241,6 +339,16 @@ const AdminDashboard = () => {
                                 </table>
                             )}
                         </div>
+                    </div>
+                    <div className="search-results">
+                        <h2>Search Results</h2>
+                        <ul>
+                            {searchResults.map((result, index) => (
+                                <li key={index}>
+                                    {searchType === 'appointments' ? `Appointment with ${result.patientName}` : result.name}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
                 {isFeedbackModalOpen && (
