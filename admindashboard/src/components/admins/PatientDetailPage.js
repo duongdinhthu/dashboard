@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
-import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
-import './DoctorDetailPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
+import Sidebar from './Sidebar';
+import FeedbackListWithReply from './FeedbackListWithReply';
+import '../admins/PatientDetailPage.css';
 
 const PatientDetailPage = () => {
     const { patientId } = useParams();
@@ -64,14 +64,14 @@ const PatientDetailPage = () => {
                 handleOpenAppointmentsPage={() => navigate('/appointments')}
                 handleOpenStaffPage={() => navigate('/staff')}
             />
-            <div className="content">
+            <div className="patient-content">
                 <div className="header">
                     <h4>Patient Details</h4>
                     <button className="back-button" onClick={handleBack}>Back to Patients Page</button>
                 </div>
                 {patient ? (
                     <div className="patient-info">
-                        <h5>{patient.patient_name}</h5>
+                        <p>Name: {patient.patient_name}</p>
                         <p>Email: {patient.patient_email}</p>
                         <p>Phone: {patient.patient_phone}</p>
                         <p>Address: {patient.patient_address}</p>
