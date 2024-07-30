@@ -1,184 +1,71 @@
+/* General styles for the dashboard */
 .doctor-dashboard {
-    padding: 20px;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
 }
 
-.logout-btn {
-    color: #ffffff;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 10px;
-    gap: 5px;
-    border-radius: 4px;
-    margin-right: 30px;
-}
-
-.logout-btn:hover {
-    background-color: #d32f2f;
-}
-
-.content-doctor {
-    flex-grow: 1;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+.doctor-dashboard .main-content {
+    flex: 1;
     padding: 20px;
 }
 
-.error {
-    color: red;
-}
-
-.doctor-info h2 {
-    margin: 0;
-}
-
-.statistics {
+.doctor-dashboard .topbar {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.stat-card {
+.doctor-dashboard .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.doctor-dashboard .stats .card {
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.doctor-dashboard .stats .card h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.doctor-dashboard .stats .card p {
+    margin: 0;
+    font-size: 16px;
+    color: #888;
+}
+
+.doctor-dashboard .content {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.stat-card h3 {
-    margin: 0 0 10px;
-}
-
-.stat-card p {
-    font-size: 24px;
-    margin: 10px 0;
-}
-
-.stat-card button {
-    padding: 10px 20px;
-    background-color: #004B91;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.stat-card button:hover {
-    background-color: #003366;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-.stat-card-apponin li {
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-li p {
-    margin: 0;
-}
-
-.select-status {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.update-status-btn {
-    padding: 5px 10px;
-    margin-top: 5px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.update-status-btn:hover {
-    background-color: #218838;
-}
-
-.show-medical-records-btn,
-.add-medical-record-btn {
-    padding: 5px 10px;
-    margin-top: 5px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.show-medical-records-btn:hover,
-.add-medical-record-btn:hover {
-    background-color: #0056b3;
-}
-
-.dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-
-.dialog-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+/* Table styles */
+.doctor-dashboard table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 20px;
 }
 
-.dialog-actions button {
-    padding: 5px 10px;
-    background-color: #004B91;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.doctor-dashboard th, .doctor-dashboard td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-.dialog-actions button:hover {
-    background-color: #003366;
+.doctor-dashboard th {
+    background-color: #f2f2f2;
 }
 
-.record-card {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f9f9f9;
-}
-
-.record-card strong {
-    font-weight: bold;
+.doctor-dashboard .header {
+    margin-bottom: 20px;
 }

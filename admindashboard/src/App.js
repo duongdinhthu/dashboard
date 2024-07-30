@@ -34,7 +34,7 @@ const App = () => {
                 <Route path="/doctors/:doctorId" element={<PrivateRoute role="admin"><DoctorDetailPage /></PrivateRoute>} />
                 <Route path="/patients/:patientId" element={<PatientDetailPage />} /> {/* Add this line */}
                 <Route path="/appointments/:appointmentId" element={<AppointmentDetailPage />} /> {/* Add this line */}
-                <Route path="/staff/:staffId" element={<StaffDetailPage />} /> {/* Add this line */}
+                <Route path="/staffs/:staffId" element={<StaffDetailPage />} /> {/* Add this line */}
 
             </Routes>
         </Router>
