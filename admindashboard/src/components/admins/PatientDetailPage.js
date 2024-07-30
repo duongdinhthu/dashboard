@@ -66,7 +66,7 @@ const PatientDetailPage = () => {
             />
             <div className="patient-content">
                 <div className="header">
-                    <h4>Patient Details</h4>
+                    <h2>Patient Details</h2>
                     <button className="back-button" onClick={handleBack}>Back to Patients Page</button>
                 </div>
                 {patient ? (

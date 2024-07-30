@@ -47,7 +47,7 @@ const StaffDetailPage = () => {
             />
             <div className="content">
                 <div className="header">
-                    <h4>Staff Details</h4>
+                    <h2>Staff Details</h2>
                     <button className="back-button" onClick={handleBack}>Back to Staff Page</button>
                 </div>
                 {staff ? (

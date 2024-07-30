@@ -97,7 +97,7 @@ const DoctorDetailPage = () => {
             />
             <div className="content">
                 <div className="header">
-                    <h4>Doctor Details</h4>
+                    <h2>Doctor Details</h2>
                     <button className="back-button" onClick={handleBack}>Back to Doctors Page</button>
                 </div>
                 {doctor && (

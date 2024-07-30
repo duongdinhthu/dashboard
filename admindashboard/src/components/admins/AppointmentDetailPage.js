@@ -1,28 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import Sidebar from './Sidebar';
 import FeedbackListWithReply from './FeedbackListWithReply';
-import './AppointmentDetailPage.css';
+import '../admins/AppointmentDetailPage.css';
 
 const AppointmentDetailPage = () => {
-    const { appointmentId } = useParams();
+    const {appointmentId} = useParams();
     const [appointment, setAppointment] = useState(null);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
+    const [departmentData, setDepartmentData] = useState({});
+
 
     useEffect(() => {
         const fetchAppointmentDetails = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/api/v1/appointments/${appointmentId}`);
                 setAppointment(response.data);
-                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching appointment details', error);
             }
         };
         fetchAppointmentDetails();
     }, [appointmentId]);
+
+    useEffect(() => {
+        const fetchDoctorData = async () => {
+            try {
+                const fetchPromises = appointment.doctor.map(async (doc) => {
+                    const response = await axios.get(`http://localhost:8080/api/v1/departments/search?department_id=${doc.department_id}`);
+                    setDepartmentData(response.data[0] || {});
+                });
+                await Promise.all(fetchPromises);
+            } catch (error) {
+                console.error("Error fetching doctor data", error);
+            }
+        };
+
+        fetchDoctorData();
+    }, [appointment]);
 
     const handleBack = () => {
         navigate('/appointments');
@@ -61,43 +78,35 @@ const AppointmentDetailPage = () => {
             />
             <div className="content">
                 <div className="header">
-                    <h4>Appointment Details</h4>
+                    <h2>Appointment Details</h2>
                     <button className="back-button" onClick={handleBack}>Back to Appointments Page</button>
                 </div>
                 {appointment ? (
                     <div className="appointment-info">
-                        <h5>Appointment ID: {appointment.appointment_id}</h5>
-                        <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                        <p>Time: {getTimeFromSlot(appointment.slot)}</p>
-                        <p>Status: {appointment.status}</p>
-                        <p>Price: {appointment.price}</p>
-
-                        {appointment.doctor && appointment.doctor.length > 0 && (
-                            <div className="doctor-info">
-                                <h5>Doctor Information</h5>
-                                <p>Name: {appointment.doctor[0].doctor_name}</p>
-                                <p>Email: {appointment.doctor[0].doctor_email}</p>
-                                <p>Phone: {appointment.doctor[0].doctor_phone}</p>
-                                <p>Address: {appointment.doctor[0].doctor_address}</p>
-                            </div>
-                        )}
-
-                        {appointment.patient && appointment.patient.length > 0 && (
-                            <div className="patient-info">
-                                <h5>Patient Information</h5>
-                                <p>Name: {appointment.patient[0].patient_name}</p>
-                                <p>Email: {appointment.patient[0].patient_email}</p>
-                                <p>Phone: {appointment.patient[0].patient_phone}</p>
-                                <p>Address: {appointment.patient[0].patient_address}</p>
-                            </div>
-                        )}
+                        <h3><strong>Appointment ID:</strong> {appointment.appointment_id}</h3>
+                        <div>
+                            <p><strong>Date:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
+                            <p><strong>Time:</strong> {getTimeFromSlot(appointment.slot)}</p>
+                            <p><strong>Status:</strong> {appointment.status}</p>
+                            <p><strong>Price:</strong> {appointment.price}</p>
+                        </div>
+                        <div>
+                            <p><strong>Department:</strong> {departmentData.department_name}</p>
+                            <p><strong>Doctor:</strong> {appointment.doctor[0].doctor_name}</p>
+                        </div>
+                        <div>
+                            <p><strong>Patient Name:</strong> {appointment.patient[0].patient_name}</p>
+                            <p><strong>Email:</strong> {appointment.patient[0].patient_email}</p>
+                            <p><strong>Phone:</strong> {appointment.patient[0].patient_phone}</p>
+                            <p><strong>Address:</strong> {appointment.patient[0].patient_address}</p>
+                        </div>
                     </div>
                 ) : (
                     <p>Loading appointment details...</p>
                 )}
                 {isFeedbackModalOpen && (
                     <div className="feedback-modal">
-                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal}/>
                     </div>
                 )}
             </div>
