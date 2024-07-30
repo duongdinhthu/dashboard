@@ -7,6 +7,7 @@ import './StaffPage.css'; // Đảm bảo đường dẫn đúng đến tệp CS
 
 const StaffPage = () => {
     const [staff, setStaff] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -22,8 +23,23 @@ const StaffPage = () => {
         fetchStaff();
     }, []);
 
-    const handleBack = () => {
-        navigate('/admindashboard');
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/staffs/search-new', {
+                params: { keyword: searchQuery }
+            });
+            setStaff(response.data);
+        } catch (error) {
+            console.error('Error searching staff', error);
+        }
+    };
+
+    const handleStaffClick = (staffId) => {
+        navigate(`/staff/${staffId}`);
     };
 
     const handleOpenFeedbackModal = () => {
@@ -62,9 +78,15 @@ const StaffPage = () => {
             <div className="content">
                 <div className="header">
                     <h2>Staffs List</h2>
-                    {/*<button className="back-button" onClick={handleBack}>*/}
-                    {/*    Back to Admin Dashboard*/}
-                    {/*</button>*/}
+                    <div className="search">
+                        <input
+                            type="text"
+                            placeholder="Name or Email"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
+                        <button onClick={handleSearch}>Search</button>
+                    </div>
                 </div>
                 <div className="table-container">
                     <table>
@@ -80,7 +102,7 @@ const StaffPage = () => {
                         <tbody>
                         {staff.length > 0 ? (
                             staff.map((staffMember, index) => (
-                                <tr key={index}>
+                                <tr key={staffMember.staff_id} onClick={() => handleStaffClick(staffMember.staff_id)}>
                                     <td>{staffMember.staff_id}</td>
                                     <td>{staffMember.staff_name}</td>
                                     <td>{staffMember.staff_email}</td>

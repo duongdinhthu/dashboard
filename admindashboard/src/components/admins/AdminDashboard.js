@@ -104,7 +104,6 @@ const AdminDashboard = () => {
             setFeedbacks(response.data);
         } catch (error) {
             console.error('Error fetching feedbacks', error);
-            setError('Error fetching feedbacks');
         }
     };
 
@@ -158,6 +157,12 @@ const AdminDashboard = () => {
             setSearchResults(response.data);
             if (searchType === 'doctors' && response.data.length > 0) {
                 navigate(`/doctors/${response.data[0].doctor_id}`);
+            } else if (searchType === 'patients' && response.data.length > 0) {
+                navigate(`/patients/${response.data[0].patient_id}`);
+            } else if (searchType === 'staff' && response.data.length > 0) {
+                navigate(`/staff/${response.data[0].staff_id}`);
+            } else if (searchType === 'appointments' && response.data.length > 0) {
+                navigate(`/appointments/${response.data[0].appointment_id}`);
             }
             console.log(response.data);
         } catch (error) {
@@ -285,7 +290,7 @@ const AdminDashboard = () => {
                         <button onClick={handleSearch}>Search</button>
                     </div>
                     <div className="profile">
-                    <span>Admin</span>
+                        <span>Admin</span>
                         <button onClick={handleLogout}>Logout <img width="20" height="20"
                                                                    src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
                                                                    alt="exit--v1"/></button>
