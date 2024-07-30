@@ -84,17 +84,19 @@ const PatientsPage = () => {
                 <div className="header">
                     <h2>Patients List</h2>
                     <div className="search">
-                        <input
-                            type="text"
-                            placeholder="Name or Email"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                        />
+                        <div className="input-container">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                            />
+                            <label>Name or Email</label>
+                        </div>
                         <button onClick={handleSearch}>Search</button>
                     </div>
                 </div>
                 <div className="table-container">
-                    <table>
+                <table>
                         <thead>
                         <tr>
                             <th>ID</th>

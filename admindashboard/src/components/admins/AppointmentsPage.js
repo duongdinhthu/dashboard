@@ -117,24 +117,32 @@ const AppointmentsPage = () => {
                 <div className="header">
                     <h2>Appointments List</h2>
                     <div className="search">
-                        <input
-                            type="date"
-                            placeholder="Start Date"
-                            value={startDate}
-                            onChange={handleStartDateChange}
-                        />
-                        <input
-                            type="date"
-                            placeholder="End Date"
-                            value={endDate}
-                            onChange={handleEndDateChange}
-                        />
-                        <select value={status} onChange={handleStatusChange}>
-                            <option value="">All Statuses</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
+                        <div className="input-container">
+                            <input
+                                type="date"
+                                placeholder="Start Date"
+                                value={startDate}
+                                onChange={handleStartDateChange}
+                            />
+                            <label>Start Date</label>
+                        </div>
+                        <div className="input-container">
+                            <input
+                                type="date"
+                                placeholder="End Date"
+                                value={endDate}
+                                onChange={handleEndDateChange}
+                            />
+                            <label>End Date</label>
+                        </div>
+                        <div className="input-container">
+                            <select value={status} onChange={handleStatusChange}>
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <label>Status</label>
+                        </div>
                         <button onClick={handleSearch}>Search</button>
                     </div>
                 </div>

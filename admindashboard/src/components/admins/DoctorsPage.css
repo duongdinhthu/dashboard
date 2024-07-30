@@ -200,3 +200,61 @@ tr:hover {
 .doctor-row {
     height: 60px;
 }
+
+.search select{
+    border: 1px solid rgba(0,0,0,0.3);
+    outline: none;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+.input-container{
+    position: relative;
+    width: fit-content;
+}
+
+.input-container label{
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    width: fit-content;
+    background-color: white;
+    color: #004B91;
+    padding: 0 5px;
+}
+
+.search{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.search input {
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 4px;
+    font-size: 15px;
+    outline: none;
+}
+
+.search button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    outline: none;
+    color: white;
+    background-color: #004B91;
+    cursor: pointer;
+}
+
+.search button:hover {
+    background-color: white;
+    color: #004B91;
+    box-shadow: 0 0 3px #004B91;
+}

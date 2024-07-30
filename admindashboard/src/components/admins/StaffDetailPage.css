@@ -19,12 +19,19 @@
 }
 
 .back-button {
-    padding: 5px 10px;
+    padding: 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #D90000;
     color: white;
+    outline: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.back-button:hover{
+    background-color: white;
+    color: #D90000;
+    box-shadow: 0 0 3px #D90000;
 }
 
 .staff-info {
