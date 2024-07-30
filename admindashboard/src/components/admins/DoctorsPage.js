@@ -8,7 +8,7 @@ import './DoctorsPage.css'; // Ensure the path to the CSS file is correct
 const DoctorsPage = () => {
     const [departments, setDepartments] = useState([]);
     const [doctors, setDoctors] = useState([]);
-    const [expanded, setExpanded] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -59,8 +59,12 @@ const DoctorsPage = () => {
         navigate('/staff');
     };
 
-    const handleAccordionToggle = (departmentId) => {
-        setExpanded(expanded === departmentId ? null : departmentId);
+    const handleDepartmentClick = (department) => {
+        setSelectedDepartment(department);
+    };
+
+    const handleBackClick = () => {
+        setSelectedDepartment(null);
     };
 
     const handleSearchChange = (e) => {
@@ -95,7 +99,7 @@ const DoctorsPage = () => {
             />
             <div className="content-container">
                 <div className="header-container">
-                    <h2>Departments & Doctors</h2>
+                    <h2>{selectedDepartment ? selectedDepartment.department_name : 'Departments & Doctors'}</h2>
                     <div className="search">
                         <div className="input-container">
                             <input
@@ -108,53 +112,50 @@ const DoctorsPage = () => {
                         <button onClick={handleSearch}>Search</button>
                     </div>
                 </div>
-                <div className="grid-container">
-                    {departments.map(department => (
-                        <div className="grid-item" key={department.department_id}>
-                            <div className="department-card">
-                                <div className="accordion">
-                                    <div className="accordion-summary" onClick={() => handleAccordionToggle(department.department_id)}>
+                {selectedDepartment ? (
+                    <div style={{display:'flow-root'}}>
+                        <button onClick={handleBackClick} className="back-button" style={{float:'right'}}>Back to Doctors Page</button>
+                        <div className="table-container">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {doctors
+                                    .filter(doctor => doctor.department_id === selectedDepartment.department_id)
+                                    .map(doctor => (
+                                        <tr key={doctor.doctor_id} onClick={() => handleDoctorClick(doctor.doctor_id)} className="doctor-row" style={{ cursor: 'pointer' }}>
+                                            <td>{doctor.doctor_id}</td>
+                                            <td>{doctor.doctor_name}</td>
+                                            <td>{doctor.doctor_email}</td>
+                                            <td>{doctor.doctor_phone}</td>
+                                            <td>{doctor.doctor_address}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid-container">
+                        {departments.map(department => (
+                            <div className="grid-item" key={department.department_id}>
+                                <div className="department-card" onClick={() => handleDepartmentClick(department)}>
+                                    <div className="accordion-summary">
                                         <h6>{department.department_name}</h6>
                                         <span><img width="30" height="30" src="https://img.icons8.com/ios/50/004b91/view-file.png" alt="view-file"/></span>
                                     </div>
-                                    {expanded === department.department_id && (
-                                        <div className="accordion-details-overlay">
-                                            <div className="overlay-content">
-                                                <button className="close-button" onClick={() => handleAccordionToggle(null)}>X</button>
-                                                <div className="table-container">
-                                                    <table>
-                                                        <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Email</th>
-                                                            <th>Phone</th>
-                                                            <th>Address</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {doctors
-                                                            .filter(doctor => doctor.department_id === department.department_id)
-                                                            .map(doctor => (
-                                                                <tr key={doctor.doctor_id} onClick={() => handleDoctorClick(doctor.doctor_id)} className="doctor-row" style={{ cursor: 'pointer' }}>
-                                                                    <td>{doctor.doctor_id}</td>
-                                                                    <td>{doctor.doctor_name}</td>
-                                                                    <td>{doctor.doctor_email}</td>
-                                                                    <td>{doctor.doctor_phone}</td>
-                                                                    <td>{doctor.doctor_address}</td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
                 {isFeedbackModalOpen && (
                     <div className="feedback-modal">
                         <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
