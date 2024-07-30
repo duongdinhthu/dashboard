@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
+import Sidebar from './Sidebar'; // Ensure the path to Sidebar is correct
 import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
-import './DoctorsPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
+import './DoctorsPage.css'; // Ensure the path to the CSS file is correct
 
 const DoctorsPage = () => {
     const [departments, setDepartments] = useState([]);
     const [doctors, setDoctors] = useState([]);
     const [expanded, setExpanded] = useState(null);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,10 +30,6 @@ const DoctorsPage = () => {
         };
         fetchDepartmentsAndDoctors();
     }, []);
-
-    const handleBack = () => {
-        navigate('/admindashboard');
-    };
 
     const handleDoctorClick = (doctorId) => {
         navigate(`/doctors/${doctorId}`);
@@ -65,6 +63,26 @@ const DoctorsPage = () => {
         setExpanded(expanded === departmentId ? null : departmentId);
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/doctors/search-new', {
+                params: { keyword: searchQuery }
+            });
+            setSearchResults(response.data);
+            if (response.data.length > 0) {
+                handleDoctorClick(response.data[0].doctor_id);
+            } else {
+                alert('No doctors found');
+            }
+        } catch (error) {
+            console.error('Error searching doctors', error);
+        }
+    };
+
     return (
         <div className="doctors-page-container">
             <Sidebar
@@ -78,7 +96,15 @@ const DoctorsPage = () => {
             <div className="content-container">
                 <div className="header-container">
                     <h2>Departments & Doctors</h2>
-                    {/*<button onClick={handleBack} className="back-button">Back to Admin Dashboard</button>*/}
+                    <div className="search">
+                        <input
+                            type="text"
+                            placeholder="Search Doctor by Name or Email"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
+                        <button onClick={handleSearch}>Search</button>
+                    </div>
                 </div>
                 <div className="grid-container">
                     {departments.map(department => (
