@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; // Đảm bảo đường dẫn đúng đến component Sidebar
-import FeedbackListWithReply from './FeedbackListWithReply'; // Import FeedbackListWithReply component
-import './AppointmentsPage.css'; // Đảm bảo đường dẫn đúng đến tệp CSS của bạn
+import Sidebar from './Sidebar';
+import FeedbackListWithReply from './FeedbackListWithReply';
+import './AppointmentsPage.css';
 
 const AppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [status, setStatus] = useState('');
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -65,6 +69,41 @@ const AppointmentsPage = () => {
         navigate('/staff');
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleStartDateChange = (e) => {
+        setStartDate(e.target.value);
+    };
+
+    const handleEndDateChange = (e) => {
+        setEndDate(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setStatus(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/appointments/search-new', {
+                params: {
+                    start_date: startDate,
+                    end_date: endDate,
+                    status: status
+                }
+            });
+            setAppointments(response.data);
+        } catch (error) {
+            console.error('Error searching appointments', error);
+        }
+    };
+
+    const handleAppointmentClick = (appointmentId) => {
+        navigate(`/appointments/${appointmentId}`);
+    };
+
     return (
         <div className="appointments-page">
             <Sidebar
@@ -77,9 +116,27 @@ const AppointmentsPage = () => {
             <div className="content">
                 <div className="header">
                     <h2>Appointments List</h2>
-                    {/*<button className="back-button" onClick={handleBack}>*/}
-                    {/*    Back to Admin Dashboard*/}
-                    {/*</button>*/}
+                    <div className="search">
+                        <input
+                            type="date"
+                            placeholder="Start Date"
+                            value={startDate}
+                            onChange={handleStartDateChange}
+                        />
+                        <input
+                            type="date"
+                            placeholder="End Date"
+                            value={endDate}
+                            onChange={handleEndDateChange}
+                        />
+                        <select value={status} onChange={handleStatusChange}>
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <button onClick={handleSearch}>Search</button>
+                    </div>
                 </div>
                 <div className="table-container">
                     <table>
@@ -97,7 +154,7 @@ const AppointmentsPage = () => {
                         <tbody>
                         {appointments.length > 0 ? (
                             appointments.map((appointment, index) => (
-                                <tr key={index}>
+                                <tr key={index} onClick={() => handleAppointmentClick(appointment.appointment_id)}>
                                     <td>{appointment.appointment_id}</td>
                                     <td>{appointment.patient && appointment.patient[0] ? appointment.patient[0].patient_name : 'N/A'}</td>
                                     <td>{appointment.doctor && appointment.doctor[0] ? appointment.doctor[0].doctor_name : 'N/A'}</td>

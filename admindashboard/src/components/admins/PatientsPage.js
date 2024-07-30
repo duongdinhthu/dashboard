@@ -7,6 +7,7 @@ import './PatientsPage.css'; // Đảm bảo đường dẫn đúng đến tệp
 
 const PatientsPage = () => {
     const [patients, setPatients] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -21,10 +22,6 @@ const PatientsPage = () => {
         };
         fetchPatients();
     }, []);
-
-    const handleBack = () => {
-        navigate('/admindashboard');
-    };
 
     const handleOpenFeedbackModal = () => {
         setIsFeedbackModalOpen(true);
@@ -50,6 +47,30 @@ const PatientsPage = () => {
         navigate('/staff');
     };
 
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/patients/search-new', {
+                params: { keyword: searchQuery }
+            });
+            setPatients(response.data);
+            if (response.data.length > 0) {
+                handlePatientClick(response.data[0].patient_id);
+            } else {
+                alert('No patients found');
+            }
+        } catch (error) {
+            console.error('Error searching patients', error);
+        }
+    };
+
+    const handlePatientClick = (patientId) => {
+        navigate(`/patients/${patientId}`);
+    };
+
     return (
         <div className="patients-page">
             <Sidebar
@@ -62,9 +83,15 @@ const PatientsPage = () => {
             <div className="content">
                 <div className="header">
                     <h2>Patients List</h2>
-                    {/*<button className="back-button" onClick={handleBack}>*/}
-                    {/*    Back to Admin Dashboard*/}
-                    {/*</button>*/}
+                    <div className="search">
+                        <input
+                            type="text"
+                            placeholder="Name or Email"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
+                        <button onClick={handleSearch}>Search</button>
+                    </div>
                 </div>
                 <div className="table-container">
                     <table>
@@ -79,8 +106,8 @@ const PatientsPage = () => {
                         </thead>
                         <tbody>
                         {patients.length > 0 ? (
-                            patients.map((patient, index) => (
-                                <tr key={index}>
+                            patients.map((patient) => (
+                                <tr key={patient.patient_id} onClick={() => handlePatientClick(patient.patient_id)}>
                                     <td>{patient.patient_id}</td>
                                     <td>{patient.patient_name}</td>
                                     <td>{patient.patient_email}</td>
