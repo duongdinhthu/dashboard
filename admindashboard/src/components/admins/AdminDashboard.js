@@ -232,45 +232,60 @@ const AdminDashboard = () => {
             <div className="main-content">
                 <div className="topbar">
                     <div className="search">
-                        <select value={searchType} onChange={handleSearchTypeChange}>
-                            <option value="patients">Patients</option>
-                            <option value="staff">Staff</option>
-                            <option value="appointments">Appointments</option>
-                            <option value="doctors">Doctors</option>
-                        </select>
+                        <div className="input-container">
+                            <select id="type-select" value={searchType} onChange={handleSearchTypeChange}>
+                                <option value="patients">Patients</option>
+                                <option value="staff">Staff</option>
+                                <option value="appointments">Appointments</option>
+                                <option value="doctors">Doctors</option>
+                            </select>
+                            <label htmlFor="type-select">Search Type</label>
+                        </div>
                         {searchType === 'appointments' ? (
                             <>
-                                <input
-                                    type="date"
-                                    placeholder="Start Date"
-                                    value={startDate}
-                                    onChange={handleStartDateChange}
-                                />
-                                <input
-                                    type="date"
-                                    placeholder="End Date"
-                                    value={endDate}
-                                    onChange={handleEndDateChange}
-                                />
-                                <select value={status} onChange={handleStatusChange}>
-                                    <option value="">All Statuses</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
+                                <div className="input-container">
+                                    <input
+                                        id="start-date"
+                                        type="date"
+                                        placeholder="Start Date"
+                                        value={startDate}
+                                        onChange={handleStartDateChange}
+                                    />
+                                    <label htmlFor="start-date">Start Date</label>
+                                </div>
+                                <div className="input-container">
+                                    <input
+                                        id="end-date"
+                                        type="date"
+                                        placeholder="End Date"
+                                        value={endDate}
+                                        onChange={handleEndDateChange}
+                                    />
+                                    <label htmlFor="end-date">End Date</label>
+                                </div>
+                                <div className="input-container">
+                                    <select value={status} onChange={handleStatusChange}>
+                                        <option value="">Select Status</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                    <label>Status</label>
+                                </div>
                             </>
                         ) : (
-                            <input
-                                type="text"
-                                placeholder={searchType === 'patients' || searchType === 'staff' || searchType === 'doctors' ? "Name or Email" : "Search..."}
-                                value={searchQuery}
-                                onChange={handleSearchChange}
-                            />
+                            <div className="input-container">
+                                <input
+                                    type="text" value={searchQuery}
+                                    onChange={handleSearchChange}
+                                />
+                                <label>Name or Email</label>
+                            </div>
                         )}
                         <button onClick={handleSearch}>Search</button>
                     </div>
                     <div className="profile">
-                        <span>Admin</span>
+                    <span>Admin</span>
                         <button onClick={handleLogout}>Logout <img width="20" height="20"
                                                                    src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
                                                                    alt="exit--v1"/></button>
@@ -278,7 +293,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="content">
                     <h2>Dashboard</h2>
-                    {error && <div className="error">{error}</div>}
+                    {/*{error && <div className="error">{error}</div>}*/}
 
                     <div className="stats">
                         <div className="card" onClick={handleOpenDoctorsPage}>
