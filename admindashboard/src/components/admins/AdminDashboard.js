@@ -1,5 +1,3 @@
-// src/components/admins/AdminDashboard.js
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -158,6 +156,9 @@ const AdminDashboard = () => {
         try {
             const response = await axios.get(url, { params });
             setSearchResults(response.data);
+            if (searchType === 'doctors' && response.data.length > 0) {
+                navigate(`/doctors/${response.data[0].doctor_id}`);
+            }
             console.log(response.data);
         } catch (error) {
             console.error('Error searching data', error);
