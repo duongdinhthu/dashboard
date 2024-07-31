@@ -25,7 +25,8 @@ import StaffTodayAppointments from "./components/staffs/StaffTodayAppointments";
 import SearchResultsPatients from "./components/admins/SearchResultsPatients";
 import SearchResultsStaff from "./components/admins/SearchResultsStaff";
 import SearchResultsAppointments from "./components/admins/SearchResultsAppointments";
-import SearchResultsDoctors from "./components/admins/SearchResultsDoctors"; // Import the new components
+import SearchResultsDoctors from "./components/admins/SearchResultsDoctors";
+import UpcomingAppointments from './components/staffs/UpcomingAppointments';
 
 const App = () => {
     return (
@@ -54,6 +55,7 @@ const App = () => {
                 <Route path="/medicalrecords" element={<MedicalRecords />} />
                 <Route path="/record-details" element={<RecordDetails />} />
                 <Route path="/stafftodayappointments" element={<StaffTodayAppointments />} />
+                <Route path="/upcoming-appointments" element={<UpcomingAppointments />} />
             </Routes>
         </Router>
     );

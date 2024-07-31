@@ -69,37 +69,6 @@ const StaffDashboard = () => {
             });
     };
 
-    const fetchUpcomingAppointments = () => {
-        const today = new Date();
-        const endDay = new Date(today);
-        endDay.setDate(today.getDate() + 3);
-
-        const start_date = today.toISOString().split('T')[0];
-        const end_date = endDay.toISOString().split('T')[0];
-
-        axios.get(`http://localhost:8080/api/v1/appointments/search-new`, {
-            params: { start_date, end_date }
-        })
-            .then(response => {
-                const flatData = response.data.map(item => ({
-                    appointment_id: item.appointment_id,
-                    patient_name: item.patient?.[0]?.patient_name,
-                    doctor_name: item.doctor?.[0]?.doctor_name,
-                    appointment_date: item.appointment_date,
-                    medical_day: item.medical_day,
-                    slot: item.slot,
-                    status: item.status,
-                    payment_name: item.payment_name,
-                    price: item.price,
-                    staff_id: item.staff_id,
-                }));
-                setUpcomingAppointments(flatData);
-            })
-            .catch(error => {
-                console.error('Error fetching upcoming appointments', error);
-                setError('Error fetching upcoming appointments');
-            });
-    };
 
     const handleStatusChange = (event) => {
         setStatusFilter(event.target.value);
@@ -162,7 +131,7 @@ const StaffDashboard = () => {
     };
 
     const handleUpcomingAppointments = () => {
-        fetchUpcomingAppointments();
+        navigate('/upcoming-appointments');
     };
 
     return (
@@ -205,38 +174,6 @@ const StaffDashboard = () => {
                             <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
                             <p><strong>Status:</strong> {appointment.status}</p>
                             <p><strong>Price:</strong> {appointment.price}$</p>
-                            <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
-                            {appointment.status === 'Pending' && (
-                                <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')}
-                                        className="action-button confirm-button">Confirm</button>
-                            )}
-                            {appointment.status === 'Confirmed' && (
-                                <>
-                                    <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')}
-                                            className="action-button complete-button">Complete
-                                    </button>
-                                    <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')}
-                                            className="action-button cancel-button">Cancel
-                                    </button>
-                                </>
-                            )}
-                            {appointment.status !== 'Completed' && (
-                                <button onClick={() => handleEditClick(appointment)}
-                                        className="action-button edit-button">Edit</button>
-                            )}
-                        </div>
-                    ))}
-                </section>
-                <section className="upcoming-appointment-list">
-                    <h3>Schedule for the next 3 days</h3>
-                    {upcomingAppointments.map((appointment) => (
-                        <div className="appointment-card" key={appointment.appointment_id}>
-                            <h2>{appointment.patient_name}</h2>
-                            <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                            <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
-                            <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
-                            <p><strong>Status:</strong> {appointment.status}</p>
-                            <p><strong>Price:</strong> {appointment.price}</p>
                             <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
                             {appointment.status === 'Pending' && (
                                 <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')}
