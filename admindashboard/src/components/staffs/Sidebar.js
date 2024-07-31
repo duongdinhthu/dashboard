@@ -40,7 +40,6 @@ const Sidebar = () => {
                      alt="calendar-delete"/>
                 Cancelled Appointments
             </button>
-
         </div>
     );
 };

@@ -4,6 +4,23 @@
     width: 100vw;
 }
 
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
 .appointments-list {
     list-style: none;

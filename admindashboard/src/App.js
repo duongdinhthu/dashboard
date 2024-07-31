@@ -21,6 +21,7 @@ import TodayAppointments from "./components/doctors/TodayAppointments";
 import MonthlyAppointments from "./components/doctors/MonthlyAppointments";
 import MedicalRecords from "./components/doctors/MedicalRecords";
 import RecordDetails from "./components/doctors/RecordDetails";
+import StaffTodayAppointments from "./components/staffs/StaffTodayAppointments";
 const App = () => {
     return (
         <Router>
@@ -43,6 +44,7 @@ const App = () => {
                 <Route path="/monthlyappointments" element={<MonthlyAppointments />} />
                 <Route path="/medicalrecords" element={<MedicalRecords />} />
                 <Route path="/record-details" element={<RecordDetails />} />
+                <Route path="/stafftodayappointments" element={<StaffTodayAppointments />} />
             </Routes>
         </Router>
     );

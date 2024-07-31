@@ -1,0 +1,124 @@
+.today-appointments {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #004b91;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sidebar button:hover {
+    background-color: #003366;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 400px;
+}
+
+.appointments-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.appointments-list li {
+    background-color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.appointments-list p {
+    margin: 5px 0;
+}
+
+.dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dialog-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.dialog-content {
+    margin-bottom: 20px;
+}
+
+.dialog-content input,
+.dialog-content select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.dialog-actions {
+    text-align: right;
+}
+
+.dialog-actions .btn {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dialog-actions .btn-danger {
+    background-color: #e74c3c;
+    color: #ffffff;
+}
+
+.dialog-actions .btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.dialog-actions .btn-primary {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.dialog-actions .btn-primary:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+    .today-appointments {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .content {
+        padding: 10px;
+    }
+}
