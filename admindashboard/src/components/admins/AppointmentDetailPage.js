@@ -4,6 +4,7 @@ import {useParams, useNavigate} from 'react-router-dom';
 import Sidebar from './Sidebar';
 import FeedbackListWithReply from './FeedbackListWithReply';
 import '../admins/AppointmentDetailPage.css';
+import $ from 'jquery';
 
 const AppointmentDetailPage = () => {
     const {appointmentId} = useParams();

@@ -9,6 +9,9 @@ const PatientDetailPage = () => {
     const { patientId } = useParams();
     const [patient, setPatient] = useState(null);
     const [appointments, setAppointments] = useState([]);
+    const [doctors, setDoctors] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [medicalRecords, setMedicalRecords] = useState([]);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -17,10 +20,18 @@ const PatientDetailPage = () => {
             try {
                 const patientResponse = await axios.get(`http://localhost:8080/api/v1/patients/${patientId}`);
                 setPatient(patientResponse.data);
-                console.log('Patient Data:', patientResponse.data);
+
                 const appointmentsResponse = await axios.get(`http://localhost:8080/api/v1/patients/${patientId}/appointments`);
                 setAppointments(appointmentsResponse.data);
-                console.log('Appointments Data:', appointmentsResponse.data);
+
+                const medicalRecordsResponse = await axios.get(`http://localhost:8080/api/v1/medicalrecords/search?patient_id=${patientId}`);
+                setMedicalRecords(medicalRecordsResponse.data);
+
+                const doctorsResponse = await axios.get(`http://localhost:8080/api/v1/doctors/list`);
+                setDoctors(doctorsResponse.data);
+
+                const departmentsResponse = await axios.get(`http://localhost:8080/api/v1/departments/list`);
+                setDepartments(departmentsResponse.data);
             } catch (error) {
                 console.error('Error fetching patient details', error);
             }
@@ -41,6 +52,17 @@ const PatientDetailPage = () => {
         setIsFeedbackModalOpen(false);
     };
 
+    const getDoctorName = (doctorId) => {
+        const doctor = doctors.find(doc => doc.doctor_id === doctorId);
+        return doctor ? doctor.doctor_name : 'Unknown Doctor';
+    };
+
+    const getDepartmentName = (departmentId) => {
+        const department = departments.find(dep => dep.department_id === departmentId);
+        return department ? department.department_name : 'Unknown Department';
+    };
+
+
     const getTimeFromSlot = (slot) => {
         const slotToTime = {
             1: "08:00 - 09:00",
@@ -53,6 +75,10 @@ const PatientDetailPage = () => {
             8: "16:00 - 17:00"
         };
         return slotToTime[slot] || "Unknown Time";
+    };
+
+    const handleAppointmentClick = (appointmentId) => {
+        navigate(`/appointments/${appointmentId}`);
     };
 
     return (
@@ -86,6 +112,7 @@ const PatientDetailPage = () => {
                             <table>
                                 <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Date</th>
                                     <th>Time</th>
                                     <th>Doctor</th>
@@ -95,7 +122,9 @@ const PatientDetailPage = () => {
                                 <tbody>
                                 {appointments.length > 0 ? (
                                     appointments.map(appointment => (
-                                        <tr key={appointment.appointment_id}>
+                                        <tr key={appointment.appointment_id}
+                                            onClick={() => handleAppointmentClick(appointment.appointment_id)}>
+                                            <td>{appointment.appointment_id}</td>
                                             <td>{new Date(appointment.medical_day).toLocaleDateString()}</td>
                                             <td>{getTimeFromSlot(appointment.slot)}</td>
                                             <td>{appointment.doctor?.[0]?.doctor_name || 'N/A'}</td>
@@ -112,9 +141,50 @@ const PatientDetailPage = () => {
                         </div>
                     </div>
                 </div>
+                {medicalRecords && (
+                    <div className="appointments-container">
+                        <div className="appointments-card">
+                            <h6>Medical Record</h6>
+                            <div className="table-container">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>Department</th>
+                                        <th>Doctor</th>
+                                        <th>Symptoms</th>
+                                        <th>Diagnosis</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {medicalRecords.length > 0 ? (
+                                        medicalRecords.map(medicalRecord => (
+                                            <tr key={medicalRecord.record_id}>
+                                                <td>{medicalRecord.record_id}</td>
+                                                <td>{medicalRecord.follow_up_date}</td>
+                                                {medicalRecord.doctors.map(doc => (
+                                                    <td>{getDepartmentName(doc.department_id)}</td>
+                                                ))}
+                                                <td>{getDoctorName(medicalRecord.doctor_id)}</td>
+                                                <td>{medicalRecord.symptoms}</td>
+                                                <td>{medicalRecord.diagnosis}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">No medical record found.</td>
+                                        </tr>
+                                    )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {isFeedbackModalOpen && (
                     <div className="feedback-modal">
-                        <FeedbackListWithReply onClose={handleCloseFeedbackModal} />
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal}/>
                     </div>
                 )}
             </div>

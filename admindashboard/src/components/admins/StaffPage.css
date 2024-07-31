@@ -77,3 +77,15 @@ tr:hover {
 td[align="center"] {
     text-align: center;
 }
+
+.staff-select{
+    border: 1px solid rgba(0,0,0,0.3);
+    outline: none;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 15px;
+}
+
+.staff-select option{
+    font-size: 15px;
+}

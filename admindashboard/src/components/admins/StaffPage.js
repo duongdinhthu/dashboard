@@ -23,6 +23,22 @@ const StaffPage = () => {
         fetchStaff();
     }, []);
 
+    const handleStatusChange = async (staffId, newStatus) => {
+        try {
+            await axios.put(`http://localhost:8080/api/v1/staffs/update`, {
+                staff_id: staffId,
+                staff_status: newStatus
+            });
+            setStaff(staff.map(member =>
+                member.staff_id === staffId
+                    ? { ...member, staff_status: newStatus }
+                    : member
+            ));
+        } catch (error) {
+            console.error('Error updating staff status', error);
+        }
+    };
+
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -36,10 +52,6 @@ const StaffPage = () => {
         } catch (error) {
             console.error('Error searching staff', error);
         }
-    };
-
-    const handleStaffClick = (staffId) => {
-        navigate(`/staff/${staffId}`);
     };
 
     const handleOpenFeedbackModal = () => {
@@ -99,17 +111,34 @@ const StaffPage = () => {
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Address</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Working Status</th>
                         </tr>
                         </thead>
                         <tbody>
                         {staff.length > 0 ? (
                             staff.map((staffMember, index) => (
-                                <tr key={staffMember.staff_id} onClick={() => handleStaffClick(staffMember.staff_id)}>
+                                <tr key={staffMember.staff_id}>
                                     <td>{staffMember.staff_id}</td>
                                     <td>{staffMember.staff_name}</td>
                                     <td>{staffMember.staff_email}</td>
                                     <td>{staffMember.staff_phone}</td>
                                     <td>{staffMember.staff_address}</td>
+                                    <td>{staffMember.staff_username}</td>
+                                    <td>{staffMember.staff_password}</td>
+                                    <td>
+                                        <select
+                                            value={staffMember.staff_status}
+                                            onChange={(e) => handleStatusChange(staffMember.staff_id, e.target.value)}
+                                            className="staff-select"
+                                        >
+                                            <option value="Working">Working</option>
+                                            <option value="Inactive">Inactive</option>
+                                            <option value="On Leave">On Leave</option>
+                                            <option value="Stopped">Stopped</option>
+                                        </select>
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -118,7 +147,7 @@ const StaffPage = () => {
                             </tr>
                         )}
                         </tbody>
-                    </table>
+                </table>
                 </div>
                 {isFeedbackModalOpen && (
                     <div className="feedback-modal">

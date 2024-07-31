@@ -65,6 +65,7 @@ html, body, #root {
     display: flex;
     gap: 20px;
     flex-wrap: nowrap;
+    margin-bottom: 50px;
 }
 
 .appointments-card {
