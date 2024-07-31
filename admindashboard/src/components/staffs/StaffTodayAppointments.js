@@ -166,7 +166,12 @@ const StaffTodayAppointments = () => {
     };
 
     return (
-        <div className="today-appointments">
+        <div className="staff-today-appointments">
+            <header className="app-bar">
+                <div className="toolbar">
+                    <h1 className="title">Staff Dashboard</h1>
+                </div>
+            </header>
             <Sidebar
                 onShowTodayAppointments={() => navigate('/todayappointments')}
                 onShowMonthAppointments={() => navigate('/monthlyappointments')}
@@ -174,31 +179,40 @@ const StaffTodayAppointments = () => {
             />
             <div className="content">
                 <h3>Today's Appointments Schedule</h3>
-                <ul className="appointments-list">
+                <ul className="staff-appointments-list">
                     {filteredTodayAppointments.map((appointment, index) => (
                         <li key={index}>
-                            <p>Patient: {appointment.patient?.[0]?.patient_name || 'N/A'}</p>
-                            <p>Doctor: {appointment.doctor?.[0]?.doctor_name || 'N/A'}</p>
-                            <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                            <p>Time: {getTimeSlotLabel(appointment.slot)}</p>
-                            <p>Status: {appointment.status}</p>
+                            <div>
+                                <p>Patient Name: {appointment.patient?.[0]?.patient_name || 'N/A'}</p>
+                                <p>Doctor Name: {appointment.doctor?.[0]?.doctor_name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
+                                <p>Time: {getTimeSlotLabel(appointment.slot)}</p>
+                                <p>Status: {appointment.status}</p>
+                            </div>
                             {appointment.status !== 'Completed' && (
                                 <div>
                                     <select value={newStatus} onChange={handleNewStatusChange}>
-                                        <option value="">None</option>
+                                    <option value="">None</option>
                                         <option value="Cancelled">Cancelled</option>
                                         <option value="Completed">Completed</option>
                                     </select>
-                                    <button onClick={() => handleUpdateStatus(appointment.appointment_id, newStatus)}>Update Status</button>
+                                    <button
+                                        onClick={() => handleUpdateStatus(appointment.appointment_id, newStatus)}>Update
+                                        Status
+                                    </button>
+                                    {appointment.status !== 'Completed' && (
+                                        <button onClick={() => handleEditClick(appointment)}
+                                                className="action-button edit-button">Edit</button>
+                                    )}
                                 </div>
-                            )}
-                            {appointment.status !== 'Completed' && (
-                                <button onClick={() => handleEditClick(appointment)}
-                                        className="action-button edit-button">Edit</button>
                             )}
                             {appointment.status === 'Completed' && (
                                 <div>
-                                    <button onClick={() => handleNewAppointmentOpen(appointment)}>Create new appointment</button>
+                                    <button onClick={() => handleNewAppointmentOpen(appointment)}>Create new
+                                        appointment
+                                    </button>
                                 </div>
                             )}
                         </li>

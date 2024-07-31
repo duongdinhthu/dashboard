@@ -19,6 +19,8 @@ const SearchResultsStaff = () => {
         navigate(`/staffs/${staffId}`);
     };
 
+    console.log(searchResults)
+
     return (
         <div className="search-results-page">
             <Sidebar
@@ -28,12 +30,27 @@ const SearchResultsStaff = () => {
                 handleOpenAppointmentsPage={() => navigate('/appointments')}
                 handleOpenStaffPage={() => navigate('/staff')}
             />
+            <div className="result-container">
             <h2>Search Results for Staff</h2>
             {searchResults.length > 0 ? (
                 <ul>
                     {searchResults.map((result) => (
-                        <li key={result.staff_id} onClick={() => handleStaffClick(result.staff_id)}>
-                            {result.name} - {result.email}
+                        <li key={result.staff_id}>
+                            <h3>Staff ID: {result.staff_id}</h3>
+                            <div className="result-div">
+                                <div>
+                                    <p><strong>Staff Name:</strong> {result.staff_name}</p>
+                                    <p><strong>Phone:</strong> {result.staff_phone}</p>
+                                </div>
+                                <div>
+                                    <p><strong>Username:</strong> {result.staff_username}</p>
+                                    <p><strong>Password:</strong> {result.staff_password}</p>
+                                </div>
+                                <div>
+                                    <p><strong>Address:</strong> {result.staff_address}</p>
+                                    <p><strong>Status:</strong> {result.staff_status}</p>
+                                </div>
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -45,6 +62,7 @@ const SearchResultsStaff = () => {
                     <FeedbackListWithReply onClose={handleCloseFeedbackModal}/>
                 </div>
             )}
+            </div>
         </div>
     );
 };

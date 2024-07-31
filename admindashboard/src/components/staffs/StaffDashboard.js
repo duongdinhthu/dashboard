@@ -51,17 +51,17 @@ const StaffDashboard = () => {
             .then(response => {
                 const flatData = response.data.map(item => ({
                     appointment_id: item.appointment_id,
-                    patient_name: item.patient?.[0]?.patient_name,
-                    doctor_name: item.doctor?.[0]?.doctor_name,
+                    patient_id: item.patient_id,
+                    doctor_id: item.doctor_id,
                     appointment_date: item.appointment_date,
                     medical_day: item.medical_day,
                     slot: item.slot,
                     status: item.status,
-                    payment_name: item.payment_name,
                     price: item.price,
                     staff_id: item.staff_id,
                 }));
                 setSearchResults(flatData);
+                console.log(searchResults)
             })
             .catch(error => {
                 console.error('Error fetching appointments', error);
@@ -199,14 +199,12 @@ const StaffDashboard = () => {
                 <section className="appointment-list">
                     {searchResults.map((appointment) => (
                         <div className="appointment-card" key={appointment.appointment_id}>
-                            <h2>{appointment.patient_name}</h2>
+                            <p><strong>Patient Name:</strong> {upcomingAppointments.patient_name || 'N/A'}</p>
                             <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                            <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
-                            <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                            <p><strong>Slot:</strong> {appointment.slot}</p>
+                            <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
+                            <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
                             <p><strong>Status:</strong> {appointment.status}</p>
-                            <p><strong>Payment Name:</strong> {appointment.payment_name}</p>
-                            <p><strong>Price:</strong> {appointment.price}</p>
+                            <p><strong>Price:</strong> {appointment.price}$</p>
                             <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
                             {appointment.status === 'Pending' && (
                                 <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')}
@@ -215,9 +213,11 @@ const StaffDashboard = () => {
                             {appointment.status === 'Confirmed' && (
                                 <>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')}
-                                            className="action-button complete-button">Complete</button>
+                                            className="action-button complete-button">Complete
+                                    </button>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')}
-                                            className="action-button cancel-button">Cancel</button>
+                                            className="action-button cancel-button">Cancel
+                                    </button>
                                 </>
                             )}
                             {appointment.status !== 'Completed' && (

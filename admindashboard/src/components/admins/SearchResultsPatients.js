@@ -28,23 +28,39 @@ const SearchResultsPatients = () => {
                 handleOpenAppointmentsPage={() => navigate('/appointments')}
                 handleOpenStaffPage={() => navigate('/staff')}
             />
-            <h2>Search Results for Patients</h2>
-            {searchResults.length > 0 ? (
-                <ul>
-                    {searchResults.map((result) => (
-                        <li key={result.patient_id} onClick={() => handlePatientClick(result.patient_id)}>
-                            {result.name} - {result.email}
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No results found.</p>
-            )}
-            {isFeedbackModalOpen && (
-                <div className="feedback-modal">
-                    <FeedbackListWithReply onClose={handleCloseFeedbackModal}/>
-                </div>
-            )}
+            <div className="result-container">
+                <h2>Search Results for Patients</h2>
+                {searchResults.length > 0 ? (
+                    <ul>
+                        {searchResults.map((result) => (
+                            <li key={result.patient_id} onClick={() => handlePatientClick(result.patient_id)}>
+                                <h3>Patient ID: {result.patient_id}</h3>
+                                <div className="result-div">
+                                    <div>
+                                        <p><strong>Patient Name:</strong> {result.patient_name}</p>
+                                        <p><strong>Email:</strong> {result.patient_email}</p>
+                                    </div>
+                                    <div>
+                                        <p><strong>Phone:</strong> {result.patient_phone}</p>
+                                        <p><strong>Address:</strong> {result.patient_address}</p>
+                                    </div>
+                                    <div>
+                                        <p><strong>Date of Birth:</strong> {result.patient_dob}</p>
+                                        <p><strong>Gender:</strong> {result.patient_gender}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No results found.</p>
+                )}
+                {isFeedbackModalOpen && (
+                    <div className="feedback-modal">
+                        <FeedbackListWithReply onClose={handleCloseFeedbackModal}/>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
