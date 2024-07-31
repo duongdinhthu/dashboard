@@ -12,7 +12,7 @@ import PatientsPage from './components/admins/PatientsPage';
 import AppointmentsPage from './components/admins/AppointmentsPage';
 import StaffPage from './components/admins/StaffPage';
 import DoctorDetailPage from './components/admins/DoctorDetailPage';
-import DoctorLayout from './components/doctors/DoctorLayout';
+// import DoctorLayout from './components/doctors/DoctorLayout';
 import StaffLayout from './components/staffs/StaffLayout';
 import PatientDetailPage from "./components/admins/PatientDetailPage";
 import AppointmentDetailPage from "./components/admins/AppointmentDetailPage";
@@ -20,6 +20,7 @@ import StaffDetailPage from "./components/admins/StaffDetailPage";
 import TodayAppointments from "./components/doctors/TodayAppointments";
 import MonthlyAppointments from "./components/doctors/MonthlyAppointments";
 import MedicalRecords from "./components/doctors/MedicalRecords";
+import RecordDetails from "./components/doctors/RecordDetails";
 const App = () => {
     return (
         <Router>
@@ -27,7 +28,7 @@ const App = () => {
                 <Route path="/adminlogin" element={<LoginAdmin />} />
                 <Route path="/admindashboard" element={<PrivateRoute role="admin"><AdminDashboard /></PrivateRoute>} />
                 <Route path="/doctorlogin" element={<LoginDoctor />} />
-                <Route path="/doctordashboard" element={<PrivateRoute role="doctor"><DoctorLayout><DoctorDashboard /></DoctorLayout></PrivateRoute>} />
+                <Route path="/doctordashboard" element={<PrivateRoute role="doctor"><DoctorDashboard /></PrivateRoute>} />
                 <Route path="/stafflogin" element={<LoginStaff />} />
                 <Route path="/staffdashboard" element={<PrivateRoute role="staff"><StaffLayout><StaffDashboard /></StaffLayout></PrivateRoute>} />
                 <Route path="/doctors" element={<PrivateRoute role="admin"><DoctorsPage /></PrivateRoute>} />
@@ -41,6 +42,7 @@ const App = () => {
                 <Route path="/todayappointments" element={<TodayAppointments />} />
                 <Route path="/monthlyappointments" element={<MonthlyAppointments />} />
                 <Route path="/medicalrecords" element={<MedicalRecords />} />
+                <Route path="/record-details" element={<RecordDetails />} />
             </Routes>
         </Router>
     );

@@ -290,7 +290,6 @@ const AdminDashboard = () => {
                         <button onClick={handleSearch}>Search</button>
                     </div>
                     <div className="profile">
-                        <span>Admin</span>
                         <button onClick={handleLogout}>Logout <img width="20" height="20"
                                                                    src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
                                                                    alt="exit--v1"/></button>
@@ -299,7 +298,6 @@ const AdminDashboard = () => {
                 <div className="content">
                     <h2>Dashboard</h2>
                     {/*{error && <div className="error">{error}</div>}*/}
-
                     <div className="stats">
                         <div className="card" onClick={handleOpenDoctorsPage}>
                             <h3>{stats.doctors}</h3>

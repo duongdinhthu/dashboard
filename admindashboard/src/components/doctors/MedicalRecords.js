@@ -10,6 +10,9 @@ const MedicalRecords = () => {
 
     const navigate = useNavigate(); // Define navigate
 
+    const viewRecordDetails = (record) => {
+        navigate('/record-details', { state: { record } });
+    };
     useEffect(() => {
         const storedDoctorId = localStorage.getItem('doctor_id');
         if (storedDoctorId) {
@@ -26,13 +29,24 @@ const MedicalRecords = () => {
     const filteredMedicalRecords = medicalRecords.filter(record =>
         record.patients[0]?.patient_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    const handleOpenTodayAppointments = () => {
+        navigate('/todayappointments');
+    };
+
+    const handleOpenMonthlyAppointments = () => {
+        navigate('/monthlyappointments');
+    };
+
+    const handleOpenMedicalRecords = () => {
+        navigate('/medicalrecords');
+    };
 
     return (
         <div className="medical-records">
             <Sidebar
-                onShowTodayAppointments={() => navigate('/todayappointments')}
-                onShowMonthAppointments={() => navigate('/monthlyappointments')}
-                onShowMedicalRecords={() => navigate('/medicalrecords')}
+                handleOpenTodayAppointments={handleOpenTodayAppointments}
+                handleOpenMonthlyAppointments={handleOpenMonthlyAppointments}
+                handleOpenMedicalRecords={handleOpenMedicalRecords}
             />
             <div className="content">
                 <input
@@ -50,12 +64,10 @@ const MedicalRecords = () => {
                             <div className="medical-record-details">
                                 <p><strong>Patient Name:</strong> {record.patients[0]?.patient_name || 'N/A'}</p>
                                 <p><strong>Patient Email:</strong> {record.patients[0]?.patient_email || 'N/A'}</p>
+                                <p><strong>Date:</strong> {record.follow_up_date}</p>
                                 <p><strong>Symptoms:</strong> {record.symptoms}</p>
                                 <p><strong>Diagnosis:</strong> {record.diagnosis}</p>
-                                <p><strong>Treatment:</strong> {record.treatment}</p>
-                                <p><strong>Urine Tests:</strong> {record.test_urine}</p>
-                                <p><strong>Blood Tests:</strong> {record.test_blood}</p>
-                                <p><strong>X-Ray:</strong> {record.x_ray}</p>
+                                <button onClick={() => viewRecordDetails(record)}>View Details</button>
                             </div>
                         </li>
                     ))}

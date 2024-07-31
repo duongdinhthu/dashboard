@@ -191,51 +191,72 @@ const DoctorDashboard = () => {
         }
     };
 
-    const handleToggleMonthAppointments = () => {
+    const handleLogout = () => {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('role');
+        localStorage.removeItem('doctorId');
+        navigate('/doctorlogin');
+    };
+
+    const handleOpenTodayAppointments = () => {
+        navigate('/todayappointments');
+    };
+
+    const handleOpenMonthlyAppointments = () => {
         navigate('/monthlyappointments');
     };
 
-    const handleToggleMedicalRecords = () => {
+    const handleOpenMedicalRecords = () => {
         navigate('/medicalrecords');
     };
 
+
     return (
         <div className="doctor-dashboard">
-            <div className="sidebar">
-                <Sidebar
-                    onShowTodayAppointments={() => navigate('/todayappointments')}
-                    onShowMonthAppointments={() => navigate('/monthlyappointments')}
-                    onShowMedicalRecords={() => navigate('/medicalrecords')}
-                />
-            </div>
+            <Sidebar
+                handleOpenTodayAppointments={handleOpenTodayAppointments}
+                handleOpenMonthlyAppointments={handleOpenMonthlyAppointments}
+                handleOpenMedicalRecords={handleOpenMedicalRecords}
+            />
             <div className="main-content">
-                <div className="container">
-                    {/* Search bar */}
-                    <div className="search-container">
-                        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
-                            <option value="appointments">Appointments</option>
-                            <option value="medicalrecords">Medical Records</option>
-                        </select>
+                <div className="topbar">
+                    <div className="search">
+                        <div className="input-container">
+                            <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+                                <option value="appointments">Appointments</option>
+                                <option value="medicalrecords">Medical Records</option>
+                            </select>
+                            <label>Search Type</label>
+                        </div>
                         {searchType === 'appointments' ? (
                             <>
-                                <input
-                                    type="date"
-                                    placeholder="Start Date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <input
-                                    type="date"
-                                    placeholder="End Date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                                    <option value="">Select Status</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
+                                <div className="input-container">
+                                    <input
+                                        type="date"
+                                        placeholder="Start Date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                    />
+                                    <label>Start Date</label>
+                                </div>
+                                <div className="input-container">
+                                    <input
+                                        type="date"
+                                        placeholder="End Date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                    />
+                                    <label>End Date</label>
+                                </div>
+                                <div className="input-container">
+                                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                                        <option value="">Select Status</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                    <label>Status</label>
+                                </div>
                             </>
                         ) : (
                             <input
@@ -247,6 +268,14 @@ const DoctorDashboard = () => {
                         )}
                         <button onClick={handleSearch}>Search</button>
                     </div>
+                    <div className="profile">
+                        <button onClick={handleLogout}>Logout <img width="20" height="20"
+                                                                   src="https://img.icons8.com/ios/50/FFFFFF/exit--v1.png"
+                                                                   alt="exit--v1"/></button>
+                    </div>
+                </div>
+                <div className="content">
+
                     {doctor && (
                         <div className="doctor-info">
                             <h2>Welcome, {doctor.doctor_name}</h2>
@@ -256,11 +285,11 @@ const DoctorDashboard = () => {
                             <button className="btn btn-primary" onClick={handleEditOpen}>Edit Profile</button>
                         </div>
                     )}
-                    <div className="stats-cards">
+                    <div className="stats">
                         <div className="card">
                             <div className="card-content">
-                                <h3>Today's Appointment Schedule</h3>
-                                <h4>{todayAppointments.length}</h4>
+                                <h4>Today's Appointment Schedule</h4>
+                                <h3>{todayAppointments.length}</h3>
                                 <button className="btn btn-primary" onClick={() => navigate('/todayappointments')}>
                                     View today's appointments
                                 </button>
@@ -268,8 +297,8 @@ const DoctorDashboard = () => {
                         </div>
                         <div className="card">
                             <div className="card-content">
-                                <h3>Monthly Appointments</h3>
-                                <h4>{monthAppointments.length}</h4>
+                                <h4>Monthly Appointments</h4>
+                                <h3>{monthAppointments.length}</h3>
                                 <button className="btn btn-primary" onClick={() => navigate('/monthlyappointments')}>
                                     View monthly appointments
                                 </button>
@@ -277,8 +306,8 @@ const DoctorDashboard = () => {
                         </div>
                         <div className="card">
                             <div className="card-content">
-                                <h3>Medical Records</h3>
-                                <h4>{medicalRecords.length}</h4>
+                                <h4>Medical Records</h4>
+                                <h3>{medicalRecords.length}</h3>
                                 <button className="btn btn-primary" onClick={() => navigate('/medicalrecords')}>
                                     View medical records
                                 </button>

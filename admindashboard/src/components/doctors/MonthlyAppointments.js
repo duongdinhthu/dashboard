@@ -31,16 +31,51 @@ const MonthlyAppointments = () => {
         }
     }, []);
 
+    const formatTimeSlot = (slot) => {
+        switch (slot) {
+            case 1:
+                return '8:00 AM - 9:00 AM';
+            case 2:
+                return '9:00 AM - 10:00 AM';
+            case 3:
+                return '10:00 AM - 11:00 AM';
+            case 4:
+                return '11:00 AM - 12:00 AM';
+            case 5:
+                return '01:00 PM - 02:00 PM';
+            case 6:
+                return '02:00 PM - 03:00 PM';
+            case 7:
+                return '03:00 PM - 04:00 PM';
+            case 8:
+                return '04:00 PM - 05:00 PM';
+            default:
+                return 'Slot Time Not Defined';
+        }
+    };
+
     const filteredMonthAppointments = monthAppointments.filter(appointment =>
         appointment.patient?.[0]?.patient_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const handleOpenTodayAppointments = () => {
+        navigate('/todayappointments');
+    };
+
+    const handleOpenMonthlyAppointments = () => {
+        navigate('/monthlyappointments');
+    };
+
+    const handleOpenMedicalRecords = () => {
+        navigate('/medicalrecords');
+    };
+
     return (
         <div className="monthly-appointments">
             <Sidebar
-                onShowTodayAppointments={() => navigate('/todayappointments')}
-                onShowMonthAppointments={() => navigate('/monthlyappointments')}
-                onShowMedicalRecords={() => navigate('/medicalrecords')}
+                handleOpenTodayAppointments={handleOpenTodayAppointments}
+                handleOpenMonthlyAppointments={handleOpenMonthlyAppointments}
+                handleOpenMedicalRecords={handleOpenMedicalRecords}
             />
             <div className="content">
                 <input
@@ -54,9 +89,10 @@ const MonthlyAppointments = () => {
                 <ul className="appointments-list">
                     {filteredMonthAppointments.map((appointment, index) => (
                         <li key={index}>
-                            <p>Patient: {appointment.patient?.[0]?.patient_name || 'N/A'}</p>
+                            <p>Patient Name: {appointment.patient?.[0]?.patient_name || 'N/A'}</p>
+                            <p>Email: {appointment.patient?.[0]?.patient_email || 'N/A'}</p>
                             <p>Date: {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                            <p>Time: {appointment.slot}</p>
+                            <p>Time: {formatTimeSlot(appointment.slot)}</p>
                             <p>Status: {appointment.status}</p>
                         </li>
                     ))}

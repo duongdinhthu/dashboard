@@ -1,28 +1,15 @@
 .doctor-dashboard {
     display: flex;
-}
-
-.sidebar {
-    width: 250px;
-    background-color: #f8f9fa;
+    height: 100vh;
+    width: 100vw;
 }
 
 .main-content {
+    flex: 1 1;
+    background-color: #f8f9fa;
     flex-grow: 1;
+    overflow: auto;
     padding: 20px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.search-bar {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
 .doctor-info {
@@ -58,19 +45,19 @@
     box-shadow: 0 0 3px red;
 }
 
-.stats-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 40px;
-}
-
-.card {
-    width: 30%;
+.doctor-dashboard .card{
+    background-color: #004B91;
+    color: white;
     padding: 20px;
-    border: 1px solid #ccc;
     border-radius: 4px;
     text-align: center;
-    background-color: white;
+    width: 30%;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.doctor-dashboard .stats{
+    gap: 20px;
 }
 
 .appointments-list,
@@ -82,13 +69,8 @@
 .appointments-list li,
 .medical-records-list li {
     padding: 10px;
-    border-bottom: 1px solid #ccc;
 }
 
-.appointments-list li:last-child,
-.medical-records-list li:last-child {
-    border-bottom: none;
-}
 
 .dialog {
     position: fixed;
@@ -131,5 +113,32 @@
     background-color: #f9f9f9;
 }
 h4{
+    color: #ffffff;
+    font-size: 15px;
+    margin: 0;
+}
+
+.card-content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card-content h3{
+    font-size: 25px;
+}
+
+.card-content .btn{
+    background-color: white;
     color: #004B91;
+    font-size: 15px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.card-content .btn:hover{
+    scale: 1.05;
+    transition: all 0.3s ease-in-out;
 }
