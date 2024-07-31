@@ -21,6 +21,28 @@ const StaffDashboard = () => {
         setStatusFilter(status);
         fetchAppointments();
     }, [location.search]);
+    const formatTimeSlot = (slot) => {
+        switch (slot) {
+            case 1:
+                return '8:00 AM - 9:00 AM';
+            case 2:
+                return '9:00 AM - 10:00 AM';
+            case 3:
+                return '10:00 AM - 11:00 AM';
+            case 4:
+                return '11:00 AM - 12:00 AM';
+            case 5:
+                return '01:00 PM - 02:00 PM';
+            case 6:
+                return '02:00 PM - 03:00 PM';
+            case 7:
+                return '03:00 PM - 04:00 PM';
+            case 8:
+                return '04:00 PM - 05:00 PM';
+            default:
+                return 'Slot Time Not Defined';
+        }
+    };
 
     const fetchAppointments = () => {
         axios.get(`http://localhost:8080/api/v1/appointments/search-new`, {
@@ -145,25 +167,31 @@ const StaffDashboard = () => {
 
     return (
         <div className="staff-dashboard">
-            <div className="filter-section">
-                <label>Start Date:</label>
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                <label>End Date:</label>
-                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                <label>Status:</label>
-                <select value={statusFilter} onChange={handleStatusChange}>
-                    <option value="">All</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-                <button onClick={fetchAppointments}>
+            <div className="search">
+                <div className="input-container">
+                    <label>Start Date</label>
+                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
+                </div>
+                <div className="input-container">
+                    <label>End Date</label>
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
+                </div>
+                <div className="input-container">
+                    <label>Status</label>
+                    <select value={statusFilter} onChange={handleStatusChange}>
+                        <option value="">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <a onClick={fetchAppointments}>
                     <img width="26" height="26" src="https://img.icons8.com/metro/26/004B91/search.png" alt="search"/>
-                </button>
-                <button onClick={handleTodayStats} className="today-stats-button">Thống kê hôm nay</button>
+                </a>
+                <button onClick={handleTodayStats} className="today-stats-button">Today's schedule</button>
                 <button onClick={handleUpcomingAppointments} className="upcoming-appointments-button">
-                    Lịch khám trong 3 ngày tới
+                Schedule for the next 3 days
                 </button>
             </div>
             <main>
@@ -200,16 +228,14 @@ const StaffDashboard = () => {
                     ))}
                 </section>
                 <section className="upcoming-appointment-list">
-                    <h3>Lịch khám trong 3 ngày tới</h3>
+                    <h3>Schedule for the next 3 days</h3>
                     {upcomingAppointments.map((appointment) => (
                         <div className="appointment-card" key={appointment.appointment_id}>
                             <h2>{appointment.patient_name}</h2>
                             <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                            <p><strong>Appointment Date:</strong> {new Date(appointment.appointment_date).toLocaleString()}</p>
-                            <p><strong>Medical Day:</strong> {new Date(appointment.medical_day).toLocaleDateString()}</p>
-                            <p><strong>Slot:</strong> {appointment.slot}</p>
+                            <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
+                            <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
                             <p><strong>Status:</strong> {appointment.status}</p>
-                            <p><strong>Payment Name:</strong> {appointment.payment_name}</p>
                             <p><strong>Price:</strong> {appointment.price}</p>
                             <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
                             {appointment.status === 'Pending' && (
@@ -219,9 +245,11 @@ const StaffDashboard = () => {
                             {appointment.status === 'Confirmed' && (
                                 <>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Completed')}
-                                            className="action-button complete-button">Complete</button>
+                                            className="action-button complete-button">Complete
+                                    </button>
                                     <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Cancelled')}
-                                            className="action-button cancel-button">Cancel</button>
+                                            className="action-button cancel-button">Cancel
+                                    </button>
                                 </>
                             )}
                             {appointment.status !== 'Completed' && (
