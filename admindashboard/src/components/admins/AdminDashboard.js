@@ -21,7 +21,6 @@ const AdminDashboard = () => {
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [searchType, setSearchType] = useState('patients');
-    const [searchResults, setSearchResults] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [status, setStatus] = useState('');
@@ -154,17 +153,15 @@ const AdminDashboard = () => {
 
         try {
             const response = await axios.get(url, { params });
-            setSearchResults(response.data);
-            if (searchType === 'doctors' && response.data.length > 0) {
-                navigate(`/doctors/${response.data[0].doctor_id}`);
-            } else if (searchType === 'patients' && response.data.length > 0) {
-                navigate(`/patients/${response.data[0].patient_id}`);
-            } else if (searchType === 'staff' && response.data.length > 0) {
-                navigate(`/staff/${response.data[0].staff_id}`);
-            } else if (searchType === 'appointments' && response.data.length > 0) {
-                navigate(`/appointments/${response.data[0].appointment_id}`);
+            if (searchType === 'doctors') {
+                navigate('/searchresults/doctors', { state: { searchResults: response.data } });
+            } else if (searchType === 'patients') {
+                navigate('/searchresults/patients', { state: { searchResults: response.data } });
+            } else if (searchType === 'staff') {
+                navigate('/searchresults/staff', { state: { searchResults: response.data } });
+            } else if (searchType === 'appointments') {
+                navigate('/searchresults/appointments', { state: { searchResults: response.data } });
             }
-            console.log(response.data);
         } catch (error) {
             console.error('Error searching data', error);
             setError('Error searching data');
@@ -359,16 +356,7 @@ const AdminDashboard = () => {
                             )}
                         </div>
                     </div>
-                    <div className="search-results">
-                        <h2>Search Results</h2>
-                        <ul>
-                            {searchResults.map((result, index) => (
-                                <li key={index}>
-                                    {searchType === 'appointments' ? `Appointment with ${result.patientName}` : result.name}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {/* Removed searchResults handling */}
                 </div>
                 {isFeedbackModalOpen && (
                     <div className="feedback-modal">

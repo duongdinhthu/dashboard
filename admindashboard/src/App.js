@@ -22,6 +22,11 @@ import MonthlyAppointments from "./components/doctors/MonthlyAppointments";
 import MedicalRecords from "./components/doctors/MedicalRecords";
 import RecordDetails from "./components/doctors/RecordDetails";
 import StaffTodayAppointments from "./components/staffs/StaffTodayAppointments";
+import SearchResultsPatients from "./components/admins/SearchResultsPatients";
+import SearchResultsStaff from "./components/admins/SearchResultsStaff";
+import SearchResultsAppointments from "./components/admins/SearchResultsAppointments";
+import SearchResultsDoctors from "./components/admins/SearchResultsDoctors"; // Import the new components
+
 const App = () => {
     return (
         <Router>
@@ -39,6 +44,10 @@ const App = () => {
                 <Route path="/doctors/:doctorId" element={<PrivateRoute role="admin"><DoctorDetailPage /></PrivateRoute>} />
                 <Route path="/patients/:patientId" element={<PatientDetailPage />} /> {/* Add this line */}
                 <Route path="/appointments/:appointmentId" element={<AppointmentDetailPage />} /> {/* Add this line */}
+                <Route path="/searchresults/patients" element={<PrivateRoute role="admin"><SearchResultsPatients /></PrivateRoute>} /> {/* Add this line */}
+                <Route path="/searchresults/staff" element={<PrivateRoute role="admin"><SearchResultsStaff /></PrivateRoute>} /> {/* Add this line */}
+                <Route path="/searchresults/appointments" element={<PrivateRoute role="admin"><SearchResultsAppointments /></PrivateRoute>} /> {/* Add this line */}
+                <Route path="/searchresults/doctors" element={<PrivateRoute role="admin"><SearchResultsDoctors /></PrivateRoute>} /> {/* Add this line */}
                 <Route path="/staffs/:staffId" element={<StaffDetailPage />} /> {/* Add this line */}
                 <Route path="/todayappointments" element={<TodayAppointments />} />
                 <Route path="/monthlyappointments" element={<MonthlyAppointments />} />
