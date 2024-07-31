@@ -1,71 +1,135 @@
-/* General styles for the dashboard */
 .doctor-dashboard {
     display: flex;
 }
 
-.doctor-dashboard .main-content {
-    flex: 1;
+.sidebar {
+    width: 250px;
+    background-color: #f8f9fa;
+}
+
+.main-content {
+    flex-grow: 1;
     padding: 20px;
 }
 
-.doctor-dashboard .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.doctor-info {
     margin-bottom: 20px;
 }
 
-.doctor-dashboard .stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.doctor-dashboard .stats .card {
-    background-color: #f2f2f2;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    flex: 1;
-    margin: 0 10px;
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
 }
 
-.doctor-dashboard .stats .card h3 {
-    margin: 0;
-    font-size: 24px;
+.btn-primary {
+    background-color: #004B91;
+    color: white;
 }
 
-.doctor-dashboard .stats .card p {
-    margin: 0;
-    font-size: 16px;
-    color: #888;
+.btn-primary:hover {
+    background-color: white;
+    color: #004B91;
+    box-shadow: 0 0 3px #004B91;
 }
 
-.doctor-dashboard .content {
-    background-color: #fff;
+.btn-danger {
+    background-color: red;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: white;
+    color: red;
+    box-shadow: 0 0 3px red;
+}
+
+.stats-cards {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.card {
+    width: 30%;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    background-color: white;
 }
 
-/* Table styles */
-.doctor-dashboard table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.appointments-list,
+.medical-records-list {
+    list-style: none;
+    padding: 0;
 }
 
-.doctor-dashboard th, .doctor-dashboard td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+.appointments-list li,
+.medical-records-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }
 
-.doctor-dashboard th {
-    background-color: #f2f2f2;
+.appointments-list li:last-child,
+.medical-records-list li:last-child {
+    border-bottom: none;
 }
 
-.doctor-dashboard .header {
+.dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 400px;
+    z-index: 1000;
+}
+
+.dialog-title {
+    font-size: 20px;
     margin-bottom: 20px;
+}
+
+.dialog-content {
+    margin-bottom: 20px;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dialog-actions .btn {
+    margin-left: 10px;
+}
+
+.medical-record-details {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+h4{
+    color: #004B91;
 }

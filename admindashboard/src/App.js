@@ -17,6 +17,9 @@ import StaffLayout from './components/staffs/StaffLayout';
 import PatientDetailPage from "./components/admins/PatientDetailPage";
 import AppointmentDetailPage from "./components/admins/AppointmentDetailPage";
 import StaffDetailPage from "./components/admins/StaffDetailPage";
+import TodayAppointments from "./components/doctors/TodayAppointments";
+import MonthlyAppointments from "./components/doctors/MonthlyAppointments";
+import MedicalRecords from "./components/doctors/MedicalRecords";
 const App = () => {
     return (
         <Router>
@@ -35,7 +38,9 @@ const App = () => {
                 <Route path="/patients/:patientId" element={<PatientDetailPage />} /> {/* Add this line */}
                 <Route path="/appointments/:appointmentId" element={<AppointmentDetailPage />} /> {/* Add this line */}
                 <Route path="/staffs/:staffId" element={<StaffDetailPage />} /> {/* Add this line */}
-
+                <Route path="/todayappointments" element={<TodayAppointments />} />
+                <Route path="/monthlyappointments" element={<MonthlyAppointments />} />
+                <Route path="/medicalrecords" element={<MedicalRecords />} />
             </Routes>
         </Router>
     );
