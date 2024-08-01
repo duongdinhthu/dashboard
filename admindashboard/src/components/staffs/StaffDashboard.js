@@ -69,6 +69,57 @@ const StaffDashboard = () => {
             });
     };
 
+    useEffect(() => {
+        const fetchDetails = async () => {
+            try {
+                const [patientResponse, doctorsResponse, departmentsResponse, staffsResponse] = await Promise.all([
+                    axios.get('http://localhost:8080/api/v1/patients/list'),
+                    axios.get('http://localhost:8080/api/v1/doctors/list'),
+                    axios.get('http://localhost:8080/api/v1/departments/list'),
+                    axios.get('http://localhost:8080/api/v1/staffs/list')
+                ]);
+
+                setPatients(patientResponse.data);
+                setDoctors(doctorsResponse.data);
+                setDepartments(departmentsResponse.data);
+                setStaffs(staffsResponse.data);
+            } catch (error) {
+                console.error('Error fetching details', error);
+            }
+        };
+
+        fetchDetails();
+    }, []);
+
+    const [patients, setPatients] = useState([]);
+    const [doctors, setDoctors] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [staffs, setStaffs] = useState([]);
+
+    const getDoctorName = (doctorId) => {
+        const doctor = doctors.find(doc => doc.doctor_id === doctorId);
+        return doctor ? doctor.doctor_name : 'Unknown Doctor';
+    };
+
+    const getDepartmentName = (doctorId) => {
+        const doctor = doctors.find(doc => doc.doctor_id === doctorId);
+        if (doctor) {
+            const department = departments.find(dep => dep.department_id === doctor.department_id);
+            return department ? department.department_name : 'Unknown Department';
+        }
+        return 'Unknown Department';
+    };
+
+    const getPatientName = (patientId) => {
+        const patient = patients.find(pat => pat.patient_id === patientId);
+        return patient ? patient.patient_name : 'Unknown Patient';
+    };
+
+    const getStaffName = (staffId) => {
+        const staff = staffs.find(sta => sta.staff_id === staffId);
+        return staff ? staff.staff_name : 'Unknown Staff';
+    };
+
 
     const handleStatusChange = (event) => {
         setStatusFilter(event.target.value);
@@ -134,6 +185,8 @@ const StaffDashboard = () => {
         navigate('/upcoming-appointments');
     };
 
+    console.log(upcomingAppointments)
+
     return (
         <div className="staff-dashboard">
             <div className="search">
@@ -168,13 +221,13 @@ const StaffDashboard = () => {
                 <section className="appointment-list">
                     {searchResults.map((appointment) => (
                         <div className="appointment-card" key={appointment.appointment_id}>
-                            <p><strong>Patient Name:</strong> {upcomingAppointments.patient_name || 'N/A'}</p>
-                            <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
-                            <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
+                            <p><strong>Patient Name:</strong> {getPatientName(appointment.patient_id) || 'N/A'}</p>
+                            <p><strong>Doctor Name:</strong> {getDoctorName(appointment.doctor_id)}</p>
+                            <p><strong>Appointment Date:</strong> {appointment.medical_day}</p>
                             <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
                             <p><strong>Status:</strong> {appointment.status}</p>
                             <p><strong>Price:</strong> {appointment.price}$</p>
-                            <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
+                            <p><strong>Staff Name:</strong> {getStaffName(appointment.staff_id) || 'N/A'}</p>
                             {appointment.status === 'Pending' && (
                                 <button onClick={() => handleUpdateStatus(appointment.appointment_id, 'Confirmed')}
                                         className="action-button confirm-button">Confirm</button>

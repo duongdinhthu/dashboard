@@ -27,8 +27,8 @@ const UpcomingAppointments = () => {
                 .then(response => {
                     const flatData = response.data.map(item => ({
                         appointment_id: item.appointment_id,
-                        patient_name: item.patient?.[0]?.patient_name,
-                        doctor_name: item.doctor?.[0]?.doctor_name,
+                        patient_id: item.patient_id,
+                        doctor_id: item.doctor_id,
                         appointment_date: item.appointment_date,
                         medical_day: item.medical_day,
                         slot: item.slot,
@@ -123,6 +123,58 @@ const UpcomingAppointments = () => {
         setEditItem(null);
     };
 
+    useEffect(() => {
+        const fetchDetails = async () => {
+            try {
+                const [patientResponse, doctorsResponse, departmentsResponse, staffsResponse] = await Promise.all([
+                    axios.get('http://localhost:8080/api/v1/patients/list'),
+                    axios.get('http://localhost:8080/api/v1/doctors/list'),
+                    axios.get('http://localhost:8080/api/v1/departments/list'),
+                    axios.get('http://localhost:8080/api/v1/staffs/list')
+                ]);
+
+                setPatients(patientResponse.data);
+                setDoctors(doctorsResponse.data);
+                setDepartments(departmentsResponse.data);
+                setStaffs(staffsResponse.data);
+            } catch (error) {
+                console.error('Error fetching details', error);
+            }
+        };
+
+        fetchDetails();
+    }, []);
+
+    const [patients, setPatients] = useState([]);
+    const [doctors, setDoctors] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [staffs, setStaffs] = useState([]);
+
+    const getDoctorName = (doctorId) => {
+        const doctor = doctors.find(doc => doc.doctor_id === doctorId);
+        return doctor ? doctor.doctor_name : 'Unknown Doctor';
+    };
+
+    const getDepartmentName = (doctorId) => {
+        const doctor = doctors.find(doc => doc.doctor_id === doctorId);
+        if (doctor) {
+            const department = departments.find(dep => dep.department_id === doctor.department_id);
+            return department ? department.department_name : 'Unknown Department';
+        }
+        return 'Unknown Department';
+    };
+
+    const getPatientName = (patientId) => {
+        const patient = patients.find(pat => pat.patient_id === patientId);
+        return patient ? patient.patient_name : 'Unknown Patient';
+    };
+
+    const getStaffName = (staffId) => {
+        const staff = staffs.find(sta => sta.staff_id === staffId);
+        return staff ? staff.staff_name : 'Unknown Staff';
+    };
+
+
     return (
         <div className="staff-today-appointments">
             <header className="app-bar">
@@ -141,8 +193,8 @@ const UpcomingAppointments = () => {
             {upcomingAppointments.map((appointment) => (
                 <li key={appointment.appointment_id}>
                     <div>
-                        <p><strong>Patient Name:</strong> {appointment.patient_name}</p>
-                        <p><strong>Doctor Name:</strong> {appointment.doctor_name}</p>
+                        <p><strong>Patient Name:</strong> {getPatientName(appointment.patient_id)}</p>
+                        <p><strong>Doctor Name:</strong> {getDoctorName(appointment.doctor_id)}</p>
                     </div>
                     <div>
                         <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
@@ -151,7 +203,7 @@ const UpcomingAppointments = () => {
                     </div>
                     <div>
                         <p><strong>Price:</strong> {appointment.price}</p>
-                        <p><strong>Staff ID:</strong> {appointment.staff_id || 'N/A'}</p>
+                        <p><strong>Staff Name:</strong> {getStaffName(appointment.staff_id) || 'N/A'}</p>
                     </div>
                     <div>
                         {appointment.status === 'Pending' && (
