@@ -197,7 +197,7 @@ const UpcomingAppointments = () => {
                         <p><strong>Doctor Name:</strong> {getDoctorName(appointment.doctor_id)}</p>
                     </div>
                     <div>
-                        <p><strong>Appointment Date:</strong> {appointment.appointment_date}</p>
+                        <p><strong>Appointment Date:</strong> {appointment.medical_day}</p>
                         <p><strong>Appointment Time:</strong> {formatTimeSlot(appointment.slot)}</p>
                         <p><strong>Status:</strong> {appointment.status}</p>
                     </div>

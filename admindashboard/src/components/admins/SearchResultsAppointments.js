@@ -98,7 +98,7 @@ const SearchResultsAppointments = () => {
                                         <p><strong>Doctor Name:</strong> {getDoctorName(result.doctor_id)}</p>
                                     </div>
                                     <div>
-                                        <p><strong>Appointment Date:</strong> {formatDate(result.appointment_date)}</p>
+                                        <p><strong>Appointment Date:</strong> {formatDate(result.medical_day)}</p>
                                         <p><strong>Appointment Time:</strong> {convertSlotToTime(result.slot)}</p>
                                     </div>
                                     <div>
